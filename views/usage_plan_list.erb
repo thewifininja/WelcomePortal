@@ -1,0 +1,55 @@
+<div class='rg-heading'>
+
+  <h2 class='uk-visible-small'>Usage Plans</h2>
+  <h1 class='uk-hidden-small'>Usage Plans</h1>
+
+</div>
+
+<div class="rg-transparent-bg rg-payment-form uk-padding-remove uk-margin-remove">
+  <% unless @current_account %>
+    <div class="uk-h3">
+      <% if @login_session %>
+        Please <%= link_to 'sign up', :action => :quick_purchase %> to purchase
+      <% else %>
+        Please <%= link_to 'sign up', :action => :quick_purchase %> or <%= link_to 'login', :action => :index %> to purchase
+      <% end %>
+      <br/><br/>
+    </div>
+  <% end %>
+  
+  <div class="rg-pricing">
+
+    <% if @current_account && @current_account.usage_plan && @current_account.usage_plan.price %>
+      <h3>
+        Your most recent plan was the 
+        <strong><%=@current_account.usage_plan.name%></strong> plan at
+        <strong>$<%= sprintf("%.2f", @current_account.usage_plan.price) %></strong>
+      </h3>
+    <% end %>
+   
+    <%= render :partial => 'prorated_credit' %>
+  
+    <div class='uk-grid'>
+    
+      <% @usage_plans.each do |usage_plan|  %>
+      
+        <div class="uk-width-small-1-1 uk-width-large-1-2">
+
+          <%= render :partial => 'usage_plan', :object => usage_plan %>
+
+          <div class="rg-purchase-button">
+            <%= render :partial => 'usage_plan_purchase_link', :locals => { :usage_plan => usage_plan, :merchant => @merchant } %>
+          </div>
+        
+          <br/>
+      
+        </div>
+        
+      <% end %>
+  
+    </div>
+
+  </div>
+</div>
+
+

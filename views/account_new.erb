@@ -1,0 +1,24 @@
+<div class="rg-heading">
+  <h2 class='uk-visible-small'>Sign Up</h2>
+  <h1 class='uk-hidden-small'>Sign Up</h1>
+</div>
+
+<div class="uk-grid rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-small-1-1 uk-width-medium-1-1 uk-width-large-2-3">
+
+    <%= form_for( @account, :as => :account, :url => { :action => :account_create },
+      :html => { :class => 'uk-form rg-form', :name => 'account_form', :id => 'account_form' }) do |f| %>
+
+      <%= render :partial => 'account_form', :locals => { :f => f } %>
+      <br/>
+      <div class="uk-form-row">
+        <%= render :partial => 'terms_checkbox' %>
+        <%= button_tag('Sign up', :class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' }) %>
+      </div>
+    <% end %>
+
+  </div>
+  <div class="uk-width-small-1-1 uk-width-medium-1-1 uk-width-large-1-4">
+    <%= error_messages_for :account %>
+  </div>
+</div>

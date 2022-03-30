@@ -1,0 +1,14 @@
+<% bars.each do |bar| %>
+  <tr>
+
+    <% bar[:columns].each do |td| %>
+      <td><%= td %></td>
+    <% end %>
+
+    <td>
+      <div class="uk-progress <%= bar[:progress_bar_container_class] || bar[:bar_class] || 'uk-progress-success' %>">
+        <div class="uk-progress-bar " style="white-space: nowrap; width: <%= bar[:percent] %>%;"> &nbsp; <%= bar[:value] %></div>
+      </div>
+    </td>
+  </tr>
+<% end %>

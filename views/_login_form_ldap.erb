@@ -1,0 +1,21 @@
+<%= form_tag({:action => :ldap_login}, {:id => 'ldap_login', :class => 'uk-form rg-form'}) do %>
+  <fieldset data-uk-margin>
+    <legend>Staff & Students Login</legend>
+    <div class="uk-form-row">
+        <%= text_field_tag 'login', params[:login], :title => 'Enter your full Email',
+            :placeholder => 'XYZ Schools email address...', :class => 'uk-width-1-1',
+            :autocorrect => :off, :autocapitalize => :off, :required => true,
+            :pattern => '[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$' %>
+    </div>
+    <div class="uk-form-row">
+      <%= password_field_tag 'password', '', :title => 'Password', :placeholder => 'password...', :class => 'uk-width-1-1' %>
+    </div>
+    <div style="display: none;" class="uk-form-row">
+      <%= select :ldap_domain, :id,
+        LdapDomain.all.collect { |ld| [ ld.name, ld.id ] }, {}, {:class => 'uk-width-1-1'} %>
+    </div>
+    <div class="uk-form-row">
+      <%= button_tag('Sign On', :class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' }) %>
+    </div>
+  </fieldset>
+<% end %>

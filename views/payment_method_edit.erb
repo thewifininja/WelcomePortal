@@ -1,0 +1,47 @@
+<div class="uk-grid rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+
+  <% if @payment_method.errors.empty? %>
+    <div class="uk-width-large-1-6"></div>
+  <% end %>
+
+  <div class="uk-width-small-1-1 uk-width-medium-1-1 uk-width-large-2-3">
+    
+    <div class='rg-heading'>
+      <h2 class='uk-visible-small'>Update Payment Method</h2>
+      <h1 class='uk-hidden-small'>Update Payment Method</h1>
+    </div>
+
+    <%= form_for(@payment_method, :url => { :action => :payment_method_update },
+          :html => { 
+            :class => 'uk-form rg-form', 
+            :name => 'payment_form', 
+            :id => 'payment_form', 
+            :onsubmit => 
+              (
+                'return stripeFormOnSubmit()' if @payment_method.is_stripe_token? || 
+                @current_account_or_token.usage_plan.try(:is_stripe?) 
+              )
+          }.reject{|k,v| v.nil?}) do |f| %>
+
+      <fieldset data-uk-margin>
+        <%= render :partial => 'payment_method_form', :locals => { :f => f } %>
+
+        <div class="uk-form-row">
+          <%= button_tag('Update', :class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' }) %>
+        </div>
+        <% if @payment_method.persisted? %>
+          <%= link_to 'Delete Payment Method', { :action => :payment_method_delete, :id => @payment_method.id }, { :class => 'uk-button uk-width-1-1 rg-button', data: { confirm: 'This will remove your payment method and prevent recurring billing from taking place. You will no longer be able to use the network once your usage expires. Are you sure you want to continue?', :disable_with => 'Please wait...' }} %>
+        <% end %>
+      </fieldset>
+      
+    <% end %>
+
+  </div>
+
+  <% unless @payment_method.errors.empty? %>
+    <div class="uk-width-small-1-1 uk-width-medium-1-1 uk-width-large-1-4 rg-transparent-bg">
+      <%= error_messages_for :payment_method %>
+    </div>
+  <% end %>
+  
+</div>

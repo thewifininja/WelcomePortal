@@ -1,0 +1,60 @@
+$header_height: 65px;
+$footer_height: 100px;
+$footer_img_top_bottom_padding: 10px;
+$footer_img_side_padding: 10px;
+$footer_bg: #FFF;
+
+/*  
+Sticky Footer Solution
+by Steve Hatcher 
+http://stever.ca
+http://www.cssstickyfooter.com
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* must declare 0 margins on everything, also for main layout components use padding, not 
+vertical margins (top and bottom) to add spacing, else those margins get added to total height 
+and your footer gets pushed down a bit more, creating vertical scroll bars in the browser */
+
+html, body {
+  height: auto;
+}
+
+#wrap {
+  min-height: 100%;
+}
+
+#main {
+  overflow: auto;
+  padding: $header_height 0px ($footer_height + 30px);
+}
+
+#footer {
+  position: relative;
+  margin-top: $footer_height - ($footer_height * 2);
+  height: $footer_height;
+  clear: both;
+  text-align: center;
+  width: 100%;
+  padding-bottom: $footer_height;
+  background: $footer_bg;
+}
+#footer img {
+  max-height: $footer_height;
+  margin: auto;
+  display: inline-block;
+  padding: $footer_img_top_bottom_padding $footer_img_side_padding;
+}
+
+/*Opera Fix*/
+body:before {/* thanks to Maleika (Kohoutec)*/
+  content:"";
+  height: 100%;
+  float: left;
+  width: 0;
+  margin-top: -32767px;/* thank you Erik J - negate effect of float*/
+}

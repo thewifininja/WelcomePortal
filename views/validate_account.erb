@@ -1,0 +1,40 @@
+<%= form_tag({action: :complete_account_validation}, {:class => 'uk-form rg-form'}) do %>
+
+  <% if @current_account_or_token.phone_validated? %>
+    <p>Your phone number has been validated successfully.  Please validate your Email address to continue.</p>
+  <% end %>
+  <% if @current_account_or_token.email_validated? %>
+    <p>Your Email address has been validated successfully.  Please validate your phone number to continue.</p>
+  <% end %>
+
+  <legend>Enter Validation Code</legend>
+  <p>Enter the validation code to activate your account.  If you did not receive the code,
+  <%= link_to 'click here', {action: :resend_validation_code, desired_usage_plan_id: @usage_plan.try(:id)} %> to resend.</p>
+  
+  <%= hidden_field_tag :desired_usage_plan_id, @usage_plan.try(:id) %>
+
+  <div class="uk-form-row">
+    <%= text_field_tag :code, nil, :class => 'uk-width-1-1', :placeholder => 'code...', autofocus: true  %>
+  </div>
+  <div class="uk-form-row">
+    <%= button_tag('Proceed', :class => 'uk-button uk-width-1-1 rg-button' ) %>
+  </div>
+<% end %>
+
+<% if @current_account_or_token.phone_validation_pending?(@usage_plan) %>
+  <%= form_for(@account, :as => :current_account_or_token, 
+        :url => { :action => :update_phone_number }, 
+        :html => { :class => 'uk-form rg-form' }) do |f| %>
+
+    <%= hidden_field_tag :desired_usage_plan_id, @usage_plan.try(:id) %>
+    <p>If you need to update your mobile number, you may do so below:</p>
+
+    <div class="uk-form-row">
+      <%= f.text_field :phone, :class => 'uk-width-1-1', :placeholder => 'mobile...' %> 
+    </div>
+    <div class="uk-form-row">
+      <%= f.button 'Update', :class => 'uk-button uk-width-1-1 rg-button' %>
+    </div>
+    
+  <% end %>
+<% end %>

@@ -1,0 +1,119 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<% if @wispr_access_location %>
+<!--
+<?xml version="1.0" encoding="UTF-8"?>
+<WISPAccessGatewayParam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.acmewisp.com/WISPAccessGatewayParam.xsd">
+  <Redirect>
+    <AccessProcedure>1.0</AccessProcedure>
+    <AccessLocation><%= @wispr_access_location.to_s %></AccessLocation>
+    <LocationName><%= @wispr_location_name.to_s %></LocationName>
+    <LoginURL><%= @wispr_login_url.to_s %></LoginURL>
+    <MessageType>100</MessageType>
+    <ResponseCode>0</ResponseCode>
+  </Redirect>
+</WISPAccessGatewayParam>
+-->
+<% end %>
+
+<head>
+  
+  <title><%= @portal_controller.titleize %> Portal</title>
+  <!-- <title><%= t('.title') %></title> -->
+
+  <!-- scale properly on mobile devices -->
+  <meta name="viewport" content="initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width">
+
+  <!-- Link to this custom portal's favicon.ico -->
+  <%= portal_favicon_link_tag %>
+
+  <!-- Link to this custom portal's portal.css -->
+  <!-- Do not link other stylesheets here, instead add a require line to portal.css.scss.erb -->
+  <%= portal_stylesheet_link_tag %>
+
+  <!-- Include this custom portal's portal.js -->
+  <!-- Do not include other javascripts here, instead add a require line to portal.js.erb -->
+  <%= portal_javascript_include_tag %>
+
+  <!-- cross-site request forgery protection token for forms to use -->
+  <%= csrf_meta_tag %>
+</head>
+
+<body>
+
+  <div id="wrap">
+    
+    <nav class="rg-navbar uk-navbar uk-navbar-attached">
+      <div class="uk-container uk-container-center">
+
+        <%= link_to (portal_image_tag 'company_logo.png'), { :action => :index }, { :class => 'uk-navbar-brand uk-hidden-small' } %>
+
+        <ul class="rg-navbar-nav uk-navbar-nav uk-hidden-small">
+          <%= render :partial => 'menu' %>
+        </ul>
+
+        <a href="#rg-offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas><span class="accessible_text">Expand Menu</span></a>
+
+        <div class="uk-navbar-brand uk-navbar-center uk-visible-small">
+          <%= link_to (portal_image_tag 'company_logo.png'), { :action => :index }, { :class => 'uk-navbar-brand' } %>
+        </div>
+
+        <div id="rg-offcanvas" class="uk-offcanvas">
+          <div class="uk-offcanvas-bar">
+            <ul class="rg-navbar-nav uk-navbar-nav">
+              <%= render :partial => 'menu' %>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </nav>
+
+    <div id="main">
+      
+      <div class="rg-flash">
+        <%= render :partial => 'flash', :object => flash %>
+      </div>
+      <div class="rg-cover uk-cover uk-position-relative">
+
+        <img class="uk-invisible" src="" width="" height="" alt="">
+        <ul class="uk-slideshow uk-overlay-active" data-uk-slideshow="{kenburns:false,autoplay:true}">
+          <% splash_slideshow_images_no_path.each do |image| %>
+            <li><%= portal_image_tag(image) %></li>
+          <% end %>
+        </ul>
+
+        <div class="rg-cover-object uk-cover-object uk-position-absolute uk-flex uk-flex-center uk-flex-top">
+        </div>
+      </div>
+
+      <div class="uk-container uk-container-center">
+        <div class='uk-grid'>
+
+          <div class="uk-width-small-1-1 rg-yield">
+            <div class="uk-grid">
+              <div class="uk-width-1-1">
+                <%= render_portal_partial 'welcome_message' %>
+                <%= yield %>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  <%= render :partial => 'footer' %>
+
+  <% if @effective_portal.try(:require_tos_inline?) %>
+    <%= render :partial => 'terms_modal' %>
+  <% end %>
+
+</body>
+
+</html>

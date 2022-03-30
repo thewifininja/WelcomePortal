@@ -1,0 +1,191 @@
+<%= render_dashboard_dialogs(:device_session_summary) %>
+
+<%= render :partial => 'lan_parties' %>
+
+<div class='rg-heading'>
+  <h2 class='uk-visible-small'>Manage Devices</h2>
+  <h1 class='uk-hidden-small'>Manage Devices</h1>
+</div>
+
+<div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-1-1">
+    <p>
+      You have
+      <strong><%= pluralize(@current_account_or_token.devices.count, 'configured device') %></strong>
+      that may be used to acquire Internet access.
+    </p>
+
+    <% if ! @current_account_or_token.unlimited_devices? && @current_account_or_token.max_devices <= @current_account_or_token.devices.count %>
+
+      <p>
+        Your account <strong>does not support any additional configured
+        devices.</strong> Please delete at least one configured device below if
+        you wish to add a different one.
+      </p>
+
+    <% else %>
+
+      <% unless @current_account_or_token.unlimited_devices? %>
+        <p>
+          You may
+          <strong>configure up to <%= pluralize(@current_account_or_token.max_devices, 'device') %></strong>
+          in your account.
+        </p>
+      <% end %>
+
+      <%= render :partial => 'add_device_form' %>
+      
+    <% end %>
+
+    <% if @current_account_or_token.is_virtual_gateway? %>
+      <p>
+        You may specify 
+        <strong><%= pluralize(@current_account_or_token.max_binats, 'device') %></strong>
+        to act as a DMZ host by clicking the <b>Activate</b> button under the desired device.  
+        All inbound ports will be forwarded to the device.  Activating a DMZ host will disable
+        any active port forward rules.
+      </p>
+    <% end %>
+
+    <% if @current_account_or_token.login_sessions.any? %>  
+      <p>
+        You currently have
+        <strong><%= pluralize(@current_account_or_token.login_sessions.count, 'active session') %></strong>
+        being used to acquire Internet access.
+      </p>
+    <% end %>
+
+    <div id="device_list">
+      
+      <% deviceless_sessions = @current_account_or_token.login_sessions.where('mac IS NULL OR mac NOT IN (?)', @current_account_or_token.devices.map(&:mac)) %>
+      <% if deviceless_sessions.any? %>
+        
+        <div class="manage_devices_section">
+          <h3>Sessions Without a Device - <a href='' class='expand_all'>Expand All</a> | <a href='' class='collapse_all'>Collapse All</a></h3>
+        
+          <% deviceless_sessions.each do |ls| %>
+            <div class="device_summary_row">
+              <span class="device_header">
+                <%= [ ls.ip, ls.mac, ls.http_user_agent.try(:name) ].compact.join(' - ') %>
+              </span>
+
+              <div class="detail_row">
+                <%= render :partial => 'session_detail_row', :locals => {ls: ls} %>
+              </div>
+            </div>
+          <% end %>
+        </div><!-- sessionless devices manage_devices_section -->
+
+      <% end %>
+
+      <div class="manage_devices_section">
+        <h3>Active Devices - <a href='' class='expand_all'>Expand All</a> | <a href='' class='collapse_all'>Collapse All</a></h3>
+
+        <% active_devices = @current_account_or_token.login_sessions.where(mac: @current_account_or_token.devices.map(&:mac)).order('updated_at DESC') %>
+        <% if active_devices.empty? %>
+          <p>
+            None of your devices have active login sessions.
+          </p>
+        <% end %>
+        <% active_devices.each do |ls| %>
+          <% device = @current_account_or_token.devices.find_by(mac: ls.mac) %>
+
+          <div class="device_summary_row">
+            <span class="device_header">
+              <%= [ device.name, ( device.name != device.mac ? "(#{device.mac})" : nil ) ].compact.join(' ') %>
+            </span>
+            <% if device.binat? %>
+              <span class="device_header_badge">DMZ</span>
+            <% end %>
+            <% if device.device_port_forwards.exists? %>
+              <span class="device_header_badge"><%= pluralize(device.device_port_forwards.count, 'Port Forward') %></span>
+            <% end %>
+
+            <div class="detail_row">
+              <%= render :partial => 'device_detail_row', :locals => {device: device} %>
+              
+              <%= render :partial => 'session_detail_row', :locals => {ls: ls} %>
+            </div>
+          </div>
+
+        <% end %>
+      </div><!-- active devices manage_devices_section -->
+
+      <div class="manage_devices_section">
+        <h3>Inactive Devices - <a href='' class='expand_all'>Expand All</a> | <a href='' class='collapse_all'>Collapse All</a></h3>
+        <% inactive_devices = @current_account_or_token.devices.where.not(mac: @current_account_or_token.login_sessions.map(&:mac)) %>
+        <% if inactive_devices.any? %>
+          <p>The following devices have been registered to your account, but do not currently have active login sessions:</p>
+        <% else %>
+          <p>You do not have any inactive devices.</p>
+        <% end %>
+        <% inactive_devices.each do |device| %>
+
+          
+          <div class="device_summary_row offline">
+            <span class="device_header">
+              <%= [ device.name, ( device.name != device.mac ? "(#{device.mac})" : nil ), (device.binat ? ' - DMZ Activated' : nil) ].compact.join(' ') %>
+            </span>
+            <% if device.binat? %>
+              <span class="device_header_badge">DMZ</span>
+            <% end %>
+            <% if device.device_port_forwards.exists? %>
+              <span class="device_header_badge"><%= pluralize(device.device_port_forwards.count, 'Port Forward') %></span>
+            <% end %>
+
+            <div class="detail_row">
+              <%= render :partial => 'device_detail_row', :locals => {device: device} %>
+            </div>
+          </div>
+
+        <% end %>
+      </div><!-- inactive devices manage_devices_section -->
+
+    </div><!-- device_list -->
+
+  </div>
+</div>
+
+
+<%= render :partial => 'port_forwards' %>
+
+
+
+<%= render :partial => 'wireless' %>
+
+<script>
+$(function(){
+  $(".device_summary_row, .session_summary_row").click(function(e){
+    if ($(e.target).is('.device_summary_row')  || 
+        $(e.target).is('.session_summary_row') ||
+        $(e.target).is('.device_header')       ||
+        $(e.target).is('.device_header_badge')) {
+
+      $(this).find('.detail_row').slideToggle();
+      $(this).toggleClass('open');
+    }
+
+  });
+
+  $(".expand_all").click(function(e){
+    e.preventDefault();
+    $(this).closest('.manage_devices_section')
+           .find('.device_summary_row, .session_summary_row')
+           .addClass('open')
+           .find('.detail_row')
+           .slideDown();
+  })
+  $(".collapse_all").click(function(e){
+    e.preventDefault();
+    $(this).closest('.manage_devices_section')
+           .find('.device_summary_row, .session_summary_row')
+           .removeClass('open')
+           .find('.detail_row')
+           .slideUp();
+  })
+
+  $(".nearby_mac").click(function(e){
+    $("#device_mac").val($(this).data('mac'))
+  })
+})
+</script>

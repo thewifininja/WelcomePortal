@@ -1,0 +1,41 @@
+/* 
+CSS assets manifest for this custom portal.
+
+UIkit:
+*= require ./uikit.min
+*= require ./slideshow.min
+
+Bootstrap DateTimePicker:
+*= require bootstrap-datetimepicker
+*= require ./bootstrap-datetimepicker-standalone
+
+NVD3 (graphs):
+*= require shared/nv.d3.min
+
+Custom Portal:
+*= require ./content
+*= require ./dialog
+*= require ./footer
+*= require ./location
+*= require ./graph
+*= require ./message
+
+
+Optional Extras:
+*= require ./extra
+
+Include CSS contained within this file HERE:
+*= require_self
+*/
+
+/*
+Override the UIkit fonts here as our portal images asset path is different
+than what is specified in the UIkit CSS.
+*/
+@font-face {
+  font-family: 'FontAwesome';
+  src: url(<%= portal_asset_data_uri 'fonts/fontawesome-webfont.eot' %>);
+  src: url(<%= portal_asset_data_uri 'fonts/fontawesome-webfont.eot' %>?#iefix) format("embedded-opentype"), url(<%= portal_asset_data_uri 'fonts/fontawesome-webfont.woff2' %>) format('woff2'), url(<%= portal_asset_data_uri 'fonts/fontawesome-webfont.woff' %>) format("woff"), url(<%= portal_asset_data_uri 'fonts/fontawesome-webfont.ttf' %>) format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}

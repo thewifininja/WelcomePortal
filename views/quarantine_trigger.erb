@@ -1,0 +1,43 @@
+<div class="rg-heading">
+  <h2 class='uk-visible-small'>You Are Quarantined!</h2>
+  <h1 class='uk-hidden-small'>You Are Quarantined!</h1>
+</div>
+
+<div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-1-1">
+    
+    <h3>Online activity flagged as malicious!</h3>
+
+    <p><%= @tgm.trigger_name %></p>
+    <p><%= @tgm.reason %></p>
+    
+    <!-- Uncomment to allow the end-user to "Accept" the quarantine and delete the transient membership early -->
+    <!--
+    <% if @tel_count < 3 %>
+
+      <p>
+        This activity violates the
+        <%= link_to 'terms of service', :action => :tos %>
+        for this network. Please close the software that generated this activity.
+      </p>
+
+      <p>By clicking Accept below, you agree to abide by the terms of service.</p>
+
+      <%= button_to('Accept', { :action => :quarantine_trigger_accept, :id => @tgm.id },
+        :class => 'uk-button uk-width-1-1 rg-button',
+        :data => { :disable_with => 'Please wait...' }) %>
+
+    <% else %>
+
+      <p>You have been quarantined <b><%= @tel_count %></b> times during the past 7 days.</p>
+      <p>
+        You will need to wait
+        <b><%= distance_of_time_in_words(Time.now, @tgm.expires_at, highest_measures: 2) %></b>
+        before Internet access will be available.
+      </p>
+
+    <% end %>
+    -->
+
+  </div>
+</div>

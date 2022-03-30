@@ -1,0 +1,118 @@
+<style>
+  .grid-item { width: 46%; min-width: 250px; margin: 0 2%; }
+  .grid-sizer { width: 50%; }
+  @media screen and (max-width: 621px) {
+    .grid-sizer { width: 100%; }
+    .grid-item { width: 100%; margin: 0;}
+  }
+</style>
+
+<div class="grid" data-masonry='{ "itemSelector": ".grid-item", "columnWidth": ".grid-sizer" }'>
+  <div class="grid-sizer"></div>
+
+<% if @omniauth_strategies.any? %>
+  <div class="grid-item">
+    <%= render :partial => 'login_form_social' %>
+  </div>
+<% end %>
+
+<% @omniauth_strategies.to_a.each do |strategy| %>
+  <% if strategy.usage_plans.any? %>
+    <%# Don't show the social sign up form if there is only 1 free plan associated 
+      with the strategy, as the login button is sufficient, and having both forms 
+      is redundant and confusing. %>
+    <% unless strategy.usage_plans.count == 1 && strategy.usage_plans.first.price_free? %>
+      <div class="grid-item">
+        <!-- <%= strategy.provider_type %> Signup -->
+        <%= render :partial => 'social_signup_form', :locals => { :omniauth_strategy => strategy } %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if @captive_portal %>
+  <% if @captive_portal.shared_credential_groups.where(credential: 'free').exists? %>
+    <div class="grid-item">
+      <!-- Create a simple one-click free access form if a 'free' SCG exists -->
+      <%= render :partial => 'login_form_shared_credential_free' %>
+    </div>
+  <% end %>
+
+  <% if @captive_portal.shared_credential_groups.where.not(credential: 'free').exists? %>
+    <div class="grid-item">
+      <!-- Shared Credential Group Login -->
+      <%= render :partial => 'login_form_shared_credential' %>
+    </div>
+  <% end %>
+
+  <% if scg = @captive_portal.shared_credential_groups.where.not(boingo_venue: nil).first %>
+    <div class="grid-item">
+      <!-- Boingo Login -->
+      <%= render :partial => 'login_form_boingo', locals: { scg: scg } %>
+    </div>
+  <% end %>
+<% end %>
+
+<!-- Local Account Options -->
+<% if AccountGroup.exists? %>
+
+  <% if PmsServer.exists? %>  
+    <div class="grid-item">
+      <!-- PMS Login -->
+      <%= render :partial => 'login_form_pms' %>
+    </div>
+  <% end %>
+  
+  <% if Token.exists? %>
+    <div class="grid-item">
+      <!-- Token Login -->
+      <%= render :partial => 'login_form_token' %>
+    </div>
+  <% end %>
+
+  <% if Account.exists? %>
+    <div class="grid-item">
+      <!-- Account Login -->
+      <%= render :partial => 'login_form_account' %>
+    </div>
+  <% end %>
+  
+  <!-- Display the signup link if this portal has at least one non-PMS plan that
+  is either free or has a merchant configured -->
+  <% if @usage_plans.find { |o| o.pms_server.nil? && (o.price_free? || o.merchants.any?) } %>
+    <div class="grid-item">
+      <!-- New Account -->
+      <div class="uk-form rg-form">
+        <fieldset data-uk-margin>
+          <legend>subscribe now!</legend>
+          <div class="uk-form-row">
+            <%= link_to 'Sign Up', { :action => :quick_purchase }, { :class => 'uk-button uk-width-1-1 rg-button' } %>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+
+  <% end %>
+
+  <% if @sms_account_group %>
+    <div class="grid-item">
+      <%= render :partial => 'sms_simple_signup_form' %>
+    </div>
+  <% end %>
+
+<% end %>
+
+<% if RadiusRealm.exists? %>
+  <div class="grid-item">
+    <!-- RADIUS Login -->
+    <%= render :partial => 'login_form_radius' %>
+  </div>
+<% end %>
+
+<% if LdapDomain.exists? %>
+  <div class="grid-item">
+    <!-- LDAP Login -->
+    <%= render :partial => 'login_form_ldap' %>
+  </div>
+<% end %>
+</div>

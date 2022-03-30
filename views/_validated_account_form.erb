@@ -1,0 +1,87 @@
+<fieldset data-uk-margin>
+  <legend>account info</legend>
+    <div class="uk-form-row">
+      <%= f.text_field :login, :placeholder => 'login...', :class => 'uk-width-1-1' %>
+    </div>
+    <div class="uk-form-row">
+      <%= f.password_field :password, :placeholder => 'password...', :class => 'uk-width-1-1' %>
+    </div>
+    <div class="uk-form-row">
+      <%= f.password_field :password_confirmation, :placeholder => 'confirmation...', :class => 'uk-width-1-1' %>
+    </div>
+</fieldset>
+  
+<fieldset data-uk-margin>
+  <legend>name</legend>
+    <div class="uk-form-row">
+      <%= f.text_field :first_name, :placeholder => 'first...', :class => 'uk-width-1-1' %>
+    </div>
+    <div class="uk-form-row">
+      <%= f.text_field :last_name, :placeholder => 'last...', :class => 'uk-width-1-1' %>
+    </div>
+    <% if @validation_plans.select { |p| p.validation_method =~ /email/ }.any? %>
+      <div class="uk-form-row uk-margin-small-top" id="email_verification_notice">You will receive a verification code by email prior to account activation.</div>
+    <% end %>
+    <div class="uk-form-row">
+      <%= f.text_field :email, :placeholder => 'email...', :class => 'uk-width-1-1' %>
+    </div>
+    <!--
+    <div class="uk-form-row">
+      <%= f.text_field :email2, :placeholder => 'email2...', :class => 'uk-width-1-1' %>
+    </div>
+    -->
+</fieldset>
+  
+<fieldset data-uk-margin>
+  <legend>address</legend>
+    <div class="uk-form-row">
+      <%= f.text_field :address1, :placeholder => 'address 1...', :class => 'uk-width-1-1' %>
+    </div>
+    <div class="uk-form-row">
+      <%= f.text_field :address2, :placeholder => 'address 2...', :class => 'uk-width-1-1' %>
+    </div>
+    <div class="uk-form-row">
+      <%= f.text_field :city, :placeholder => 'city...', :class => 'uk-width-1-1' %>
+    </div>
+    <div class="uk-form-row">
+      <%= f.text_field :region, :placeholder => 'state...', :class => 'uk-width-1-1' %>
+    </div>
+    <div class="uk-form-row">
+      <%= f.text_field :zip, :placeholder => 'zip...', :class => 'uk-width-1-1' %>
+    </div>
+    <% if @validation_plans.select { |p| p.validation_method =~ /sms/ }.any? %>
+      <div class="uk-form-row uk-margin-small-top" id="phone_verification_notice">
+        You will receive an SMS message with a verification code prior to account activation.
+      </div>
+    <% end %>
+    <div class="uk-form-row uk-margin-small-top">
+      <%= f.localized_country_select(:country, priority_countries=['US', 'CA'], {}, { :class => 'uk-width-1-4', :required => true }) %>
+      <%#= f.text_field :phone, :placeholder => 'phone number', :class => 'uk-width-1-4' %>
+      <%= f.text_field :phone, :placeholder => 'phone number', :class => 'uk-width-2-3', :required => true %>
+    </div>
+  
+</fieldset>
+
+<% if @captive_portal.try(:allow_password_reset?, :secret) %>
+  <fieldset data-uk-margin>
+    <legend>account recovery</legend>
+    <div class="uk-form-row">
+      <%= fields_for(@secret_question) do |f| %>
+        <%= f.select(:id,
+          SecretQuestion.all.collect {|f| [ f.question, f.id ] },
+          { :prompt => 'Secret Question' }, { :class => 'uk-width-1-1' }) %>
+      <% end %>
+    </div>
+    <div class="uk-form-row">
+      <%= fields_for(@secret_answer) do |f| %>
+        <%= f.text_field :answer, :placeholder => 'answer...', :class => 'uk-width-1-1' %>
+      <% end %>
+    </div>
+  </fieldset>
+<% end %>
+
+
+<div class="uk-form-row">
+  <br/>
+  <%= render :partial => 'terms_checkbox' %>
+</div>

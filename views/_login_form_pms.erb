@@ -1,0 +1,17 @@
+<%= form_tag({:action => :pms_guest_login}, {:id => 'pms_guest_login', :class => 'uk-form rg-form'}) do %>
+  <fieldset data-uk-margin>
+    <legend>Room Login</legend>
+    <div class="uk-form-row">
+      <%= render :partial => 'terms_checkbox' %>
+    </div>
+    <div class="uk-form-row">
+      <%= text_field_tag 'RN', params[:RN], :title => 'Room Number', :placeholder => 'room number...', :class => 'uk-width-1-1' %>
+    </div>
+    <div class="uk-form-row">
+      <%= text_field_tag 'GN', params[:GN], :title => 'Last Name', :placeholder => 'last name...', :class => 'uk-width-1-1', :autocorrect => :off %>
+    </div>
+    <div class="uk-form-row">
+      <%= button_tag('Continue', :class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' }) %>
+    </div>
+  </fieldset>
+<% end %>

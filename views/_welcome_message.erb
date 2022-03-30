@@ -1,0 +1,13 @@
+<% 
+  welcome_login = ''
+  if @login_session
+    welcome_login = @login_session.login.capitalize
+  elsif @custom_portal
+    welcome_login = 'to ' + @custom_portal.name
+  end
+%>
+
+<div class='rg-heading'>
+  <h2 class='uk-hidden-small'><%= t('.welcome', :login => welcome_login) %></h2>
+  <h3 class='uk-visible-small'><%= t('.welcome', :login => welcome_login) %></h3>
+</div>

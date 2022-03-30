@@ -1,0 +1,19 @@
+<%= form_tag({:action => :account_login}, {:id => 'account_login', :class => 'uk-form rg-form'}) do %>
+  <fieldset data-uk-margin>
+    <legend>existing users</legend>
+    <div class="uk-form-row">
+      <%= text_field_tag 'login', params[:login], :placeholder => 'login...', :class => 'uk-width-1-1', :autocorrect => :off, :autocapitalize => :off %>
+    </div>
+    <div class="uk-form-row">
+      <%= password_field_tag 'password', '', :placeholder => 'password...', :class => 'uk-width-1-1' %>
+    </div>
+    <% if @captive_portal.try(:allow_password_reset?) %>
+      <div class="uk-form-row center-align">
+        <%= link_to( 'Forgot password?', {action: :forgot_password} ) %>
+      </div>
+    <% end %>
+    <div class="uk-form-row">
+      <%= button_tag('Sign On', :class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' }) %>
+    </div>
+  </fieldset>
+<% end %>

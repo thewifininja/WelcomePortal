@@ -1,0 +1,25 @@
+<div id="join_lan_party_modal" class="uk-modal">
+  <div class="uk-modal-dialog">
+    <div class="uk-modal-header">
+      <h2 class="inline-block">Join a LAN Party</h2>
+      <a class="uk-modal-close uk-close"></a>
+    </div>
+    
+    <p>
+      <b>WARNING:</b> By joining a LAN Party, you are entering the
+      network of another user who will have direct access to your
+      devices. Up-to-date Anti-virus and firewalls are recommended to 
+      protect your devices. Only join a LAN Party of someone you trust.
+    </p>
+
+    <%= form_tag({action: :join_lan_party}, {:class => 'uk-form'}) do %>
+      Join an existing party: <br>
+      <%= text_field_tag :party_password, nil, { :class => 'uk-width-1-1  uk-width-medium-1-2', placeholder: 'Password...'} %>
+      <%= submit_tag 'Join', { :class => 'uk-button rg-button rg-button-inline small-min-width uk-width-1-1 uk-width-medium-1-3'} %>
+    <% end %> 
+    
+    <div class="uk-modal-footer">
+      <button class="uk-modal-close rg-button">Cancel</button>
+    </div>
+  </div>
+</div>

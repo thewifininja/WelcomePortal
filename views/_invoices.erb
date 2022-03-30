@@ -1,0 +1,25 @@
+<h4>Invoices</h4>
+
+<% if @current_account && ! @current_account.merchant_transactions.empty? %>
+
+  <table class="rg-transparent-bg uk-width-1-1">
+    <% @current_account.merchant_transactions.each do |transaction| %>
+      <tr class="<%='rg-transaction-failed' unless transaction.success %>">
+        <td><%= transaction.usage_plan.name %></td>
+        <td><%= transaction.created_at %></td>
+        <td><%= transaction.price_display %></td>
+        <td>
+          <%= link_to "details", :action => :invoice, :id => transaction.id %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+  <br/>
+
+<% else %>
+
+  <p>
+    <strong>You have no invoices.</strong>
+  </p>
+
+<% end %>

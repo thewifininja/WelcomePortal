@@ -1,0 +1,102 @@
+<div class="rg-heading">
+  <h2 class='uk-visible-small'>Invoice</h2>
+  <h1 class='uk-hidden-small'>Invoice</h1>
+</div>
+
+<div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-1-1">    
+
+    <% if @current_account && transaction = @current_account.merchant_transactions.find_by_id(params[:id].to_i) %>
+
+      <br/>
+    
+      <table class="rg-transparent-bg uk-width-1-1">
+        <tr><td><%= @current_account.full_name %> </td><tr>
+
+        <% if @current_account.address1 %>
+          <tr><td>
+            <%= @current_account.address1 %> 
+            <% if @current_account.address2 %> <br/> <%= @current_account.address2 %> <% end %>
+          </td></tr>
+          <tr><td><%= @current_account.city %>, <%= @current_account.region %> <%= @current_account.zip %></td></tr>
+          <tr><td><%= @current_account.phone %></td></tr>
+        <% end %>
+
+        <tr><td><%= @current_account.email %></td></tr>
+      </table>
+      
+      <br/>
+
+      <% if usage_plan = transaction.usage_plan %>
+        <table class="rg-transparent-bg uk-width-1-1">
+          <tr>
+             <th> Category </th>
+             <th> Description </th>
+             <th> Price </th>
+          </tr>
+          <tr>
+             <td> Time </td>
+             <td> <%= usage_plan.time_plan.name %> </td>
+             <td align="right"> <%= usage_plan.time_plan.price_display %> </td>
+          </tr>
+          <tr>
+             <td> Quota </td> 
+             <td> <%= usage_plan.quota_plan.name %> </td>
+             <td align="right"> <%= usage_plan.quota_plan.price_display %> </td>
+          </tr>
+          <% usage_plan.plan_addons.of_component_type(:misc).each do |plan_addon| %>
+             <tr>
+               <td> Misc </td> 
+               <td> <%= plan_addon.name %> </td>
+               <td align="right"> <%= plan_addon.price_display %> </td>
+             </tr>
+          <% end %>
+
+          <tr>
+            <td><b>Total Plan</b></td> 
+            <td><b><%= usage_plan.name %></b></td> 
+            <td align="right"><b><%= usage_plan.price_display %></b></td> 
+          </tr>
+        </table>
+
+        <br/>
+      <% end %>
+
+      <table class="rg-transparent-bg uk-width-1-1">
+        <% if transaction.success %>
+          <tr>
+            <td> 
+              Paid <%= transaction.price_display %> on <%= transaction.created_at %>
+            </td>
+          </tr>
+
+          <tr><td> <br/> </td></tr>
+
+          <tr>
+            <td> 
+              Payment submitted via client on IP <%= transaction.ip %> with MAC <%= transaction.mac %>
+            </td>
+          </tr>
+        <% else %>
+          <tr class="rg-transaction-failed">
+            <td><b>This transaction failed with the following error:</b></td>
+          </tr>
+
+          <tr class="rg-transaction-failed">
+            <td><%= transaction.message %></td>
+          </tr>
+          <tr class="rg-transaction-failed">
+            <td>Time: <%= transaction.created_at %></td>
+          </tr>
+        <% end %>
+      </table>
+
+      <br/>
+      
+    <% else %>
+      <strong> Transaction not found! </strong>
+    <% end %>
+    
+    <%= link_to 'Back to Billing', { action: 'billing' }, { :class => 'uk-button uk-width-1-1 rg-button' } %>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+
+<% unless @current_account_or_token.unlimited_usage_minutes? && 
+          @current_account_or_token.unlimited_usage_mb_down? && 
+          @current_account_or_token.unlimited_usage_mb_up? && 
+          @current_account_or_token.no_usage_expiration? %>
+  <%= render_dashboard_dialogs(:account_usage_summary) %>
+<% end %>
+
+<div class='rg-heading'>
+  <h2 class='uk-visible-small'>Billing</h2>
+  <h1 class='uk-hidden-small'>Billing</h1>
+</div>
+
+<% if @current_account.bill_at && @current_account.usage_plan && !@current_account.usage_plan.price_free? %>
+  <% if @current_account.bill_at > Time.now %>
+    <div class='rg-heading'>
+      <h3>Your stored <%= link_to 'payment method', { :action => :payment_method_edit } %> will be automatically charged on <%= @current_account.bill_at.strftime("%A, %b %d %Y") %>.</h3>
+    </div>
+  <% elsif @current_account.bill_at < Time.now %>
+    <div class='rg-heading'>
+      <h3>Your account failed to autmatically recharge on <%= @current_account.bill_at.strftime("%A, %b %d %Y") %>. Please review your <%= link_to 'payment method', { :action => :payment_method_edit } %> to ensure continued access.</h3>
+    </div>
+  <% end %>
+<% end %>
+
+<div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-1-1">
+    <%= render :partial => 'prorated_credit' %>
+    <%= render :partial => 'invoices' %>
+  </div>
+
+  <% if @current_account.bill_at.present? %>
+    <div class="uk-width-1-1">
+      Next billing date: <%= @current_account.bill_at %>
+    </div>
+    
+  <% end %>
+
+  <div class="uk-width-1-1">
+    <%= render :partial => 'current_usage_plan' %>
+  </div>
+</div>
+
+<br />
+
+<div class="uk-grid">
+  <div class="uk-width-1-1 center-align">
+    <%= link_to 'Edit Payment Method', { :action => :payment_method_edit }, 
+      { :class => 'uk-button rg-button rg-button-inline', :disable_with => 'Please wait...' } %>
+
+    <% if @current_account && 
+          @current_account.usage_plan.try(:recurring_method) != "none" &&
+          @current_account.bill_at.nil? %>
+      <%= link_to 'Recurring Billing Disabled', { :action => :usage_plan_list }, 
+        { :class => 'uk-button rg-button rg-button-inline' } %>
+    <% elsif @current_account.bill_at.present? %>
+      <%= link_to 'Cancel Recurring Billing', 
+        { :action => :cancel_recurring_payments}, { 
+          :class => 'uk-button rg-button rg-button-inline rg-button-red-hover', 
+          :data => { 
+            data: { confirm: 'This will disable recurring payments, and you may continue to use the network until your usage has expired.  Are you sure you wish to continue?' }, 
+            :disable_with => 'Please wait...' } } %> 
+    <% end %>
+
+    <% if Coupon.first %>
+      <%= link_to 'Redeem a Coupon', { :action => :coupon }, { :class => 'uk-button rg-button rg-button-inline' } %>
+    <% end %>  
+
+
+  </div>
+</div>

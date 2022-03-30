@@ -1,0 +1,35 @@
+<div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-1-1">
+    <%= link_to( {:action => :billing} ) do %>
+      <%= portal_inline_svg 'creditcard.svg', {:class => 'tile-icon'} %>
+    <% end %>
+    <h3 class="uk-margin-top-remove uk-padding-top-remove">Billing</h3>
+    <% if @current_account_or_token.merchant_transactions.exists? %>
+      <% invoice = @current_account_or_token.merchant_transactions.last %>
+      <p>
+        Last invoice: 
+        <%= link_to "#{invoice.price_display} - #{invoice.created_at.strftime("%m-%e-%y")}", 
+          { :action => :invoice, :id => invoice.id } %>
+      </p>
+    <% else %>
+      <p>No invoices</p>
+    <% end %>
+
+    <% if @current_account_or_token.bill_at && @current_account_or_token.usage_plan && !@current_account_or_token.usage_plan.price_free? %>
+      <% if @current_account_or_token.bill_at > Time.now %>
+        <div class='rg-heading'>
+          <h3>Your stored <%= link_to 'payment method', { :action => :payment_method_edit } %> will be automatically charged on <%= @current_account_or_token.bill_at.strftime("%A, %b %d %Y") %>.</h3>
+        </div>
+      <% elsif @current_account_or_token.bill_at < Time.now %>
+        <div class='rg-heading'>
+          <h3>Your account failed to autmatically recharge on <%= @current_account_or_token.bill_at.strftime("%A, %b %d %Y") %>. Please review your <%= link_to 'payment method', { :action => :payment_method_edit } %> to ensure continued access.</h3>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%= render :partial => 'current_usage_plan' %>
+    <p>
+      <%= link_to 'Manage Billing', {:action => :billing}, {:class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' } } %>
+    </p>
+  </div>
+</div>

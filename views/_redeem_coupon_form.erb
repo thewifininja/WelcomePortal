@@ -1,0 +1,11 @@
+<%= form_tag({:action => :redeem_coupon}, {:id => 'redeem_coupon', :class => 'uk-form rg-form'}) do %>
+  <fieldset data-uk-margin>
+    <legend>enter code</legend>
+    <div class="uk-form-row">
+      <%= text_field_tag 'code', params[:code], :placeholder => 'code...', :class => 'uk-width-1-1' %>
+    </div>
+    <div class="uk-form-row">
+      <%= button_tag('Redeem', :class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' }) %>
+    </div>
+  </fieldset>      
+<% end %>

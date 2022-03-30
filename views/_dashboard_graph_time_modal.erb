@@ -1,0 +1,36 @@
+<div id="graphTimeModal" class="uk-modal">
+  <div class="uk-modal-dialog">
+
+    <div class="uk-modal-header">
+      Filters
+      <a class="uk-modal-close uk-close" type="button"></a>
+    </div>
+
+    <%= form_tag(
+        { action: :usage }, { class: 'uk-form', id: 'graph_time' }
+      ) do %>
+      
+      
+
+      <h4>Select Device</h4>
+
+      <%= select_tag('device_id', 
+                      options_for_select(@current_account_or_token.devices.map{|d| ["#{d.name} (#{d.mac})", d.id]}, :selected => @device.try(:id)), 
+                      include_blank: 'All Devices') %>
+
+      <h4>Specify a custom range</h4>
+      <%= fields_for @dialog_graph_time do |f| %>
+        Past <%= f.text_field :past_time, {:size => 3} %>
+        <%= f.collection_select :past_time_unit, GraphTime::PAST_TIME_UNITS.reject {|k,v| %w( years seconds ).include?(v) }, :last, :first %>
+        <p>or</p>
+        Range: <%= f.collection_select :range_time, GraphTime::RANGE_TIMES.reject {|k,v| %w( thisyear lastyear ).include?(v) }, :last, :first, {include_blank: '   --'} %>
+        
+      <% end %>
+      
+      <p>
+      
+        <%= link_to 'Reset', { action: :usage }, {:class => 'uk-button rg-button rg-button-inline '} %> <%= submit_tag 'Update', {:class => 'uk-button rg-button rg-button-inline '} %>
+      </p>
+    <% end # of form_tag %>  
+  </div>
+</div> <!-- graphTimeModal -->

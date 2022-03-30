@@ -1,0 +1,33 @@
+<div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-1-1">
+    <%= link_to( {:action => :manage_devices} ) do %>
+      <%= portal_inline_svg 'devices.svg', {:class => 'tile-icon'} %>
+    <% end %>
+    <h3 class="uk-margin-top-remove uk-padding-top-remove">Devices</h3>
+
+    <% dialog = get_dialog_data(:device_session_summary) %>
+    <%= render :partial => dialog_partial_path("progress_bars"),
+          :locals => { bars: dialog[:progress_bars][:bars] } %>
+    <% if @current_account_or_token.devices.where(binat: true).exists? %>
+      <p>
+        <% binats = @current_account_or_token.devices.where(binat: true) %>
+        <b><%= pluralize(binats.count, 'Active DMZ Host') %></b><br>
+        <% binats.each do |binat_device| %>
+          <b style="margin-left: 10px;"><%= binat_device.display_name %></b>
+        <% end %>
+      </p>
+    <% end %>
+    <% if @current_account_or_token.device_port_forwards.where.not(device: nil).exists? %>
+      <p>
+        <% dpfs = @current_account_or_token.device_port_forwards.where.not(device: nil) %>
+        <b><%= pluralize(dpfs.count, 'Active Port Forwards') %>:</b><br>
+        <% dpfs.each do |dpf| %>
+          <b style="margin-left: 10px;"><%= dpf.device.display_name %></b> [<%= dpf.external_ports %>]<br>
+        <% end %>
+      </p>
+    <% end %>
+    <p>
+      <%= link_to 'Manage Devices', {:action => :manage_devices}, {:class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' } } %>
+    </p>
+  </div>
+</div>

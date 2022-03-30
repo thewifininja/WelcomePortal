@@ -1,0 +1,64 @@
+<h3>Add Device</h3>
+
+<p>
+  Use this option if you wish to add access for a different device or a
+  headless device such as a printer or game console. Enter the device's
+  hardware identifier (MAC address) in the field and click the Add button
+  below.
+</p>
+
+<%= form_tag({:action => :add_device}, {:class => 'uk-form'}) do %>
+
+  <%= label_tag('device_mac', 'MAC Address:') %>
+  <%= text_field_tag(:device_mac, @device_mac, :size => 20, :placeholder => '00:00:00:00:00:00') %>
+  &nbsp;
+  
+  <% if @current_account_or_token.is_virtual_gateway? %>
+    <%= label_tag('device_binat', 'Activate DMZ') %>
+    <%= check_box_tag(:device_binat, 1, false) %>
+    &nbsp;
+  <% end %>
+  
+  <%= button_tag('Add', :class => 'uk-button uk-width-1-1 rg-button rg-button-inline no-min-width', :data => { :disable_with => 'Please wait...' }) %>
+<% end %>
+
+<% if @unclaimed_vtas.present? %>
+  <p>
+    Nearby devices:<br>
+    <% @unclaimed_vtas.each do |vta| %>    
+      <%= content_tag(:a, :class => 'nearby_mac', :data => {mac: vta.mac}) do %>
+        <%= vta.mac %>
+
+        <% if lease = DhcpLease.find_by(mac: vta.mac) %>
+          -
+          <%= lease.hostname %>
+          <% if lease.vendor %>
+           [<%= lease.vendor %>]
+          <% end %>
+        <% end %>
+      <% end %>
+      <br>
+    <% end %>
+  </p>
+<% end %>
+
+<p><%= link_to 'Help me find my MAC address', :action => 'mac_info' %></p>
+
+<!--
+<p><a href="#rg-chromecast-instructions" data-uk-modal>Google Chromecast instructions</a></p>
+
+<div id="rg-chromecast-instructions" class="uk-modal">
+  <div class="uk-modal-dialog">
+    <a class="uk-modal-close uk-close"></a>
+    <ul>
+      <li>Open the Chromecast app.</li>
+      <li>Continue through the Chromecast app until you reach the WiFi selection page.</li>
+      <li>The MAC address will be in the lower left corner of the page.</li>
+      <li>Please write down the MAC address of your Chromecast.</li>
+      <li>Click Cancel in the Chromecast app.</li>
+      <li>Type the MAC address into the field on the previous page and click Add.</li>
+      <li>Re-open the Chromecast app and complete the setup.</li>
+    </ul>
+  </div>
+</div>
+-->

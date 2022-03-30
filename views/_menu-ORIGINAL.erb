@@ -1,0 +1,48 @@
+<li class="rg-first <%= params[:action] == 'index' ? 'uk-active' : '' %>"><%= link_to 'Home', { :action => :index }, { :class => 'menuactive' } %></li>
+
+<% if @current_account_or_token.try(:can_manage_devices?) %>
+  <li class="<%= params[:action] == 'manage_devices' ? 'uk-active' : '' %>"><%= link_to 'Devices', { :action => :manage_devices }, { :class => 'menuactive' } %></li>
+<% end %>
+
+<% if @current_account %>
+  <% unless @current_account.pms_room %>
+    <li class="<%= params[:action] == 'account_info' ? 'uk-active' : '' %>"><%= link_to 'Profile', { :action => :account_info }, { :class => 'menuactive' } %></li>
+    <li class="<%= params[:action] == 'billing' ? 'uk-active' : '' %>"><%= link_to 'Billing', { :action => :billing }, { :class => 'menuactive' } %></li>
+  <% end %>
+
+  <% unless @usage_plans.empty? %>
+    <li class="<%= params[:action] == 'usage_plan_list' ? 'uk-active' : '' %>"><%= link_to 'Plans', { :action => :usage_plan_list}, { :class => 'menuactive' } %></li>
+
+    <% if Coupon.first %>
+      <li class="<%= params[:action] == 'coupon' ? 'uk-active' : '' %>"><%= link_to 'Coupon', { :action => :coupon }, { :class => 'menuactive' } %></li>
+    <% end %>    
+  <% end %>
+
+  <li class=""><%= link_to 'Usage', { :action => :usage }, { :class => 'menuactive' } %></li>
+
+<!-- Optional link to allow an end-user to delete her Account and logout
+  <li class=""><a href="#deleteAccountModal" data-uk-modal>Delete Account</a>
+  <%= render :partial => 'delete_account_modal' %></li>
+-->
+
+<% end %>
+
+<% if client_floor %>
+  <li><%= link_to 'Map', { :action => :map }, { :class => 'menuactive' } %></li>
+<% end %>
+
+<% if @logged_in %>
+  <% if ! @login_session.account || (@login_session.account && @login_session.account.lock_devices == false) %>
+  <li class=""><%= link_to 'Logout', { :action => :login_session_destroy, :method => :delete }, { :class => 'menuactive' } %></li>
+  <% end %>
+<% elsif ! @usage_plans.empty? %>
+  <li class="<%= params[:action] == 'quick_purchase' ? 'uk-active' : '' %>"><%= link_to 'Sign Up', { :action => :quick_purchase }, { :class => 'menuactive' } %></li>
+<% end %>
+
+<!-- localization example
+<% if I18n.locale == :en %>
+  <li class=""><%= link_to 'Español', { :action => :index, :locale => :es }, { :class => 'menuactive' } %></li>
+<% else %>
+  <li class=""><%= link_to 'English', { :action => :index, :locale => :en }, { :class => 'menuactive' } %></li>
+<% end %>
+-->

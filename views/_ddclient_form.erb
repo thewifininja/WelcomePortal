@@ -1,0 +1,74 @@
+<div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-1-1">
+    <p>
+      Currently assigned public IP: <b><%= @current_account.nat_assignments.first.try(:nat_ip) || 'Unknown' %></b>
+    </p>
+    <% @ddclients = [Ddclient.new] %>
+    <div class="uk-grid uk-grid-small thead">
+      <div class="uk-width-1-1 uk-width-medium-2-10">
+        <div class="uk-grid uk-grid-small">
+          <div class="uk-width-1-1">
+            Protocol
+          </div>
+        </div>
+      </div>
+      <div class="uk-width-1-1 uk-width-medium-6-10">
+        <div class="uk-grid uk-grid-small">
+          <div class="uk-width-1-3">
+            Domain Name
+          </div>
+          <div class="uk-width-1-3">
+            Username
+          </div>
+          <div class="uk-width-1-3">
+            Password
+          </div>
+        </div>
+      </div>
+      <div class="uk-width-2-10">
+      </div>
+    </div>
+    
+    <% @ddclients.each do |ddclient| %>
+      
+      <%= form_for( ddclient, :url => {action: :save_ddclient_config}, :html => {:class => 'uk-form'}) do |f| %>
+        <div class="uk-grid uk-grid-small">
+          <%= f.hidden_field :id, :id => nil %>
+          
+          <div class="uk-width-1-1 uk-width-medium-2-10">
+            <div class="uk-grid uk-grid-small">
+              <div class="uk-width-1-1">
+                <%= f.collection_select :protocol, Ddclient::PROTOCOLS, :last, :first, { }, {:class => 'uk-width-1-1', :id => nil}  %>
+              </div>
+            </div>
+          </div>
+          <div class="uk-width-1-1 uk-width-medium-6-10">
+            <div class="uk-grid uk-grid-small">
+              <div class="uk-width-1-3">
+                <%= f.text_field :hosts, {:class => 'uk-width-1-1', :id => nil} %>
+              </div>
+              <div class="uk-width-1-3">
+                <%= f.text_field :login, {:class => 'uk-width-1-1', :id => nil, :autocomplete => "off"} %>
+              </div>
+              <div class="uk-width-1-3">
+                <%= f.password_field :password, {:class => 'uk-width-1-1', :id => nil, :autocomplete => "new-password", :placeholder => (ddclient.persisted? ? 'Saved' : nil)} %>
+              </div>
+            </div>
+          </div>
+          <div class="uk-width-2-10">
+            <%= submit_tag 'Save', :class => 'uk-button rg-button no-min-width uk-width-1-1' %>
+          </div>
+
+          <% if ddclient.persisted? %>
+            <div class="uk-width-1-1">
+              <hr>
+            </div>
+          <% end %>
+        </div> 
+      <% end %>
+
+      
+    <% end %>
+    
+  </div>
+</div>

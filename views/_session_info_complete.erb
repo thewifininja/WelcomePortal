@@ -1,0 +1,94 @@
+<h3 class="uk-margin-top-remove uk-padding-top-remove">Session Info</h3>
+  
+<% if session[:desired_url] %>
+  <p>
+    You originally requested:
+    <%= link_to session[:desired_url], session[:desired_url] %>
+  </p>
+<% end %>
+
+<% if @login_session %>
+
+  <%# TODO: if logged in via facebook %>
+  <p>
+    <%# this shows facebook login status when logged in %>
+    <fb:login-button show-faces="true" width="200" max-rows="1"></fb:login-button>
+  </p>
+
+  <p id="status">
+  </p>
+  
+  <% if @login_session.online? %>
+    <p> You are online and connected to the Internet. </p>
+    
+    <% if @login_session.usage_bytes_down_remaining %>
+      <p>
+        You can transfer up to
+        <strong>
+          <%= number_to_human_size(@login_session.usage_bytes_down_remaining) %>
+          download.
+        </strong>
+      </p>
+    <% end %>
+
+    <% if @login_session.usage_bytes_up_remaining %>
+      <p>
+        You can transfer up to
+        <strong>
+          <%= number_to_human_size(@login_session.usage_bytes_up_remaining) %>
+          upload.
+        </strong>
+      </p>
+    <% end %>
+
+  <% else %>
+    <h3 class="no_usage">
+      <strong>
+        You have no online usage available and will not be able to access
+        the Internet.
+      </strong>
+    </h3>
+    
+    <p class="purchase_more">
+      <%= link_to 'purchase more usage', {:action => :usage_plan_list}, {:class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' } } %>
+    </p>
+  <% end %>
+
+  <% if @login_session.expires_at %>
+    <% if @login_session.online? %>
+      <p>
+        Your online session
+        <strong>
+          expires in <%= distance_of_time(
+            @login_session.online_minutes_remaining.minutes, highest_measures: 2) %>
+        </strong>
+        on <%= l(@login_session.expires_at) %>.
+      </p>
+    <% else %>
+      <p>
+        Your login session
+        <strong>
+          expires in <%= distance_of_time(
+            @login_session.session_minutes_remaining.minutes, highest_measures: 2) %>
+        </strong>
+        on <%= l(@login_session.expires_at) %>.
+      </p>
+    <% end %>
+  <% else %>
+    <p> Your online session <strong> never expires. </strong> </p>
+  <% end %>
+
+
+  <p> You logged in on <%= l(@login_session.created_at) %>. </p>
+  
+  <% if @login_session.shared_credential_group %>
+    <p>
+      <strong>
+        <%= @login_session.shared_credential_group.motd %>
+      </strong>
+    </p>
+  <% end %>
+  
+<% else %>
+  <p> You are not logged in. </p>
+<% end %>

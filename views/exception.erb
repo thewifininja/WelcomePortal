@@ -1,0 +1,17 @@
+<div class="rg-heading">
+  <h2 class='uk-visible-small'>Fatal Exception!</h2>
+  <h1 class='uk-hidden-small'>Fatal Exception!</h1>
+</div>
+
+<div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-1-1">
+    <p>
+      We encountered an unexpected error while processing your request.
+      Please contact technical support if the problem persists.
+    </p>
+
+    <p>The error was...</p>
+
+    <h3><%= $!.class %>: <%= h($!.message) %></h3>
+  </div>
+</div>

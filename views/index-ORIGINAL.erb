@@ -1,0 +1,48 @@
+<% if @logged_in %>
+  <div class='rg-heading'>
+    <h1 class='uk-hidden-small'><%= t('.back_at_portal') %></h1>
+    <h2 class='uk-visible-small'><%= t('.back_at_portal') %></h2>
+  </div>
+  
+  <% if @current_account_or_token %>
+    <style>
+      .grid-item { width: 48%; min-width: 250px; margin: 1%; }
+      .grid-sizer { width: 50%; }
+      @media screen and (max-width: 621px) {
+        .grid-sizer { width: 100%; }
+        .grid-item { width: 100%; margin: 5px 0;}
+      }
+    </style>
+
+    <div class="grid" data-masonry='{ "itemSelector": ".grid-item", "columnWidth": ".grid-sizer" }'>
+      <div class="grid-sizer"></div>
+      
+      <% if ! @current_account_or_token.can_be_online? %>
+        <div class="grid-item rg-transparent-bg" style="width: 98%; padding:15px">
+          <%= render :partial => 'session_info_complete' %>
+        </div>
+      <% end %>
+      <div class="grid-item">   
+        <%= render :partial => 'summary_devices' %>
+      </div>
+      <div class="grid-item">   
+        <%= render :partial => 'summary_usage' %>
+      </div>
+      <div class="grid-item">   
+        <%= render :partial => 'summary_billing' %>
+      </div>
+      <div class="grid-item">   
+        <%= render :partial => 'summary_profile' %>
+      </div>
+    </div>
+  <% else %>
+    <div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+      <div class="uk-width-1-1">
+        <%= render :partial => 'session_info' %>
+      </div>
+    </div>
+  <% end %>
+
+<% else %>
+  <%= render_portal_partial 'splash' %>  
+<% end %>

@@ -1,0 +1,56 @@
+<%= form_tag({:action => ( pf.persisted? ? :update_device_port_forward : :add_device_port_forward)}, {:class => 'uk-form'}) do %>
+  <%= fields_for pf do |f| %>
+    <%= f.hidden_field :id, {:id => nil} %>
+    <% unless pf.errors.empty? %>
+      <div class="uk-grid uk-grid-small">
+        <div class="uk-width-1-1">
+          <%= error_messages_for :port_forward %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="uk-grid uk-grid-small">  
+      <div class="uk-width-1-1 uk-width-medium-4-5">
+        <div class="uk-grid uk-grid-small">
+          <div class="uk-width-1-1 uk-width-medium-1-4">
+            <div class="uk-visible-small"><b>Name (Optional)</b></div>
+            <%= f.text_field :name, :placeholder => 'Name (Optional)', :class => 'uk-width-1-1', :id => nil  %>    
+          </div>
+          <div class="uk-width-1-1 uk-width-medium-2-4">
+            <div class="uk-grid uk-grid-small">
+              <div class="uk-width-1-1 uk-width-medium-1-3">
+                <div class="uk-visible-small"><b>External Port</b></div>
+                <%= f.text_field :external_ports, :placeholder => 'Port(s)', :class => 'uk-width-1-1', :id => nil  %>
+              </div>
+              <div class="uk-width-1-1 uk-width-medium-1-3">
+                <div class="uk-visible-small"><b>Internal Port</b></div>
+                <%= f.text_field :internal_ports, :placeholder => '(Optional)', :class => 'uk-width-1-1', :id => nil  %>
+              </div>
+              <div class="uk-width-1-1 uk-width-medium-1-3">
+                <div class="uk-visible-small"><b>Protocol</b></div>
+                <%= f.collection_select :protocol, NetApp::PORT_PROTOCOLS, :to_s, :to_s, {}, {:class => 'uk-width-1-1', :id => nil }  %>
+              </div>
+            </div>
+          </div>
+          <div class="uk-width-1-1 uk-width-medium-1-4">
+            <div class="uk-visible-small"><b>Device</b></div>
+            <%= f.collection_select :device_id, @current_account_or_token.devices, :id, :name, {include_blank: 'Disabled'}, {:class => 'uk-width-1-1', :id => nil} %>
+          </div>
+        </div>
+      </div>  
+      <div class="uk-width-1-1 uk-width-medium-1-5 center-align">
+        <% if pf.persisted? %>
+          <div class="uk-grid uk-grid-collapse">
+            <%= submit_tag 'Update', :class => 'uk-button rg-button rg-button-inline small-min-width uk-width-1-1 uk-width-medium-1-2', :data => {:disable_with => 'Update' } %> 
+            <%= submit_tag 'Delete', :class => 'uk-button rg-button rg-button-inline small-min-width uk-width-1-1 uk-width-medium-1-2', data: { confirm: 'Are you sure you want to delete this port forward?', :disable_with => 'Delete'  } %>
+          </div>
+        <% else %>
+          <%= submit_tag 'Add' , :class => 'uk-button rg-button rg-button-inline no-min-width uk-width-1-1' %>
+        <% end %>
+      </div>
+                    
+    </div>
+  <% end %>
+<% end %>
+
+<hr class="uk-visible-small">

@@ -1,0 +1,567 @@
+<div class="uk-grid rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+
+  <% if @payment_method.errors.empty? && @account.errors.empty? %>
+    <div class="uk-width-large-1-6"></div>
+  <% end %>
+
+  <div class="uk-width-small-1-1 uk-width-medium-1-1 uk-width-large-2-3">
+    
+    <div class='rg-heading'>
+      <h2 class='uk-visible-small'>Sign Up</h2>
+      <h1 class='uk-hidden-small'>Sign Up</h1>
+    </div>
+    
+    <%= form_for(@payment_method, :url => { :action => :quick_purchase_charge },
+      :html => { :class => 'uk-form rg-form', :name => 'payment_form', :id => 'payment_form', :onsubmit => 'return paymentFormOnSubmit()' }) do |f| %>
+    
+      <!-- list of available plans -->
+      <fieldset data-uk-margin>
+        <legend>usage plans</legend>
+        <% @usage_plans.each do |usage_plan| %>
+          <% 
+            # Determine argument values to be passed to the function that modifies the form
+            # based upon the combination of direct/offsite merchants and pms servers associated 
+            # with the plan
+
+            direct                      = usage_plan.direct_merchant.present?
+            offsite                     = usage_plan.offsite_merchant.present?
+            pms                         = usage_plan.pms_server.present?
+            free                        = usage_plan.price_free?
+            token                       = usage_plan.supports_tokenization?
+            email_validation_supported  = usage_plan.requires_account_validation?(:email)
+            phone_validation_supported  = usage_plan.requires_account_validation?(:sms)
+            onclick_function = sprintf("usagePlanOnclick(this, %s, %s, %s, %s, %s, %s, %s);", direct,offsite,pms,free,token,email_validation_supported,phone_validation_supported)
+            onclick_function = nil unless @paid_plans.any? || usage_plan.requires_account_validation?
+          %>
+
+          <div class="uk-form-row">
+            <%= radio_button(:usage_plan, :id, usage_plan.id, 
+                :onclick => onclick_function,
+                :data => {
+                  :direct           => direct,
+                  :offsite          => offsite,
+                  :pms              => pms,
+                  :free             => free,
+                  :token            => token,
+                  :email_validation_supported => email_validation_supported,
+                  :phone_validation_supported   => phone_validation_supported
+                }) %>&nbsp;&nbsp;
+            <label for="usage_plan_id_<%=usage_plan.id.to_s%>"><%= h(usage_plan.name) %></label>
+            <span class="uk-float-right"><%= h(usage_plan.price_display) %></span>
+          </div>
+        <% end %>
+      </fieldset>
+
+      <div id="quick_purchase_fields">
+        <% if @paid_plans.any? %>
+          <!-- list of available payment options -->
+          <fieldset data-uk-margin>
+            <legend>payment options</legend>
+            <!-- DIRECT CREDIT CARD -->
+            <% if @direct_plans.any? %>
+              <div class="uk-form-row">
+                <%= radio_button_tag(:method, :direct, params[:method].nil? ? true : params[:method] == 'direct', :onclick => 'directOnclick();') %>
+                &nbsp;&nbsp;
+                <label for="method_direct">
+                  <%= portal_image_tag('payment/visa_logo.gif', :size => '51x32') %>
+                  <%= portal_image_tag('payment/mastercard_logo.gif', :size => '51x32') %>
+                  <%= portal_image_tag('payment/amex_logo.gif', :size => '51x32') %>
+                  <%= portal_image_tag('payment/discover_logo.jpg', :size => '51x32') %>
+                </label>
+              </div>
+            <% end %>
+            <!-- END DIRECT CREDIT CARD -->
+            
+            <!-- OFFSITE/PAYPAL -->
+            <% if @offsite_plans.any? %>
+              
+                <div class="uk-form-row">
+                  <%= radio_button_tag(:method, :offsite, params[:method] == 'offsite', :onclick => 'offsiteOnclick();') %>
+                  &nbsp;&nbsp;
+                  <label for="method_offsite">
+                    <% offsite_merchants = @offsite_plans.collect(&:offsite_merchant).uniq %>
+                    <% offsite_integrations = offsite_merchants.collect(&:integration).uniq %>
+                    <% if offsite_integrations.include?("Paypal") %>
+                      <%= portal_image_tag('payment/paypal_logo.jpg', :size => '73x28') %>
+                    <% else %>
+                      <%# there could conceivably be more than 1 offsite merchant %>
+                      <%= offsite_merchants.collect(&:name).join(", ") %> 
+                    <% end %>
+                  </label>
+                </div>
+
+            <% end %>
+            <!-- END OFFSITE/PAYPAL -->
+            
+            <!-- PMS -->
+            <% if @pms_plans.any? %>
+              <div class="uk-form-row">
+                <%= radio_button_tag(:method, :pms, params[:method] == 'pms', :onclick => 'pmsOnclick();') %>
+                &nbsp;&nbsp;
+                <label for="method_pms">
+                  charge to room
+                </label>
+              </div>
+            <% end %>
+            <!-- END PMS -->
+          </fieldset>
+        <% else %>
+          <%= f.hidden_field :method, :value => (@pms_plans.any? ? 'pms' : 'direct') %>
+        <% end %>
+
+        
+        <fieldset data-uk-margin>
+          <legend>account info</legend>
+          <!-- account login block, comment to have auto-generated username/password -->
+          <div class="uk-form-row">
+            <div class="<%= 'field_with_errors' if @account.errors.keys.include? :login %>">
+              <%= text_field_tag 'login_static', params[:login_static], :placeholder => 'login...', :class => 'uk-width-1-1' %>
+            </div>
+          </div>
+          <div class="uk-form-row">
+            <div class="<%= 'field_with_errors' if @account.errors.keys.include? :password %>">
+              <%= password_field_tag 'password_static', '', :placeholder => 'password...', :class => 'uk-width-1-1' %>
+            </div>
+          </div>
+          <div class="uk-form-row">
+            <div class="<%= 'field_with_errors' if @account.errors.keys.include? :password_confirmation %>">
+              <%= password_field_tag 'password_confirmation_static', '', :placeholder => 'confirmation...', :class => 'uk-width-1-1' %>
+            </div>
+          </div>
+
+          <div class="uk-form-row uk-margin-small-top">
+            <%= text_field_tag 'email', params[:email], :placeholder => 'email...', :class => 'uk-width-1-1' %>
+          </div>
+
+        <% if VlanTagAssignment.find_by(mac: client_mac).try(:supports_wlan_dpsk?) %>
+          <div class="uk-form-row uk-margin-small-top">
+            <%= text_field_tag 'pre_shared_key', params[:pre_shared_key], :placeholder => 'wireless pre-shared key...', 
+                :class => 'uk-width-1-1', :autocomplete => "off", :autocorrect => "off", :autocapitalize => "off", :spellcheck => "false" %>
+          </div>
+        <% end %>
+      
+          <div class="uk-form-row uk-margin-small-top">
+            <%= f.hidden_field :country,  :value => 'US'             %>
+            <%= f.hidden_field :phone,    :value => 1234567890       %>
+          </div>
+
+          <!-- comment to here to remove username/password fields-->
+
+          <% unless @paid_plans.any? %>
+            <div class="uk-form-row">
+              <%= f.text_field :first_name, :placeholder => params[:method] == 'pms' ? 'room number...' : 'first name...', :class => 'uk-width-1-1' %>
+            </div>
+            <div class="uk-form-row">
+              <%= f.text_field :last_name, :placeholder => 'last name...', :class => 'uk-width-1-1' %>
+            </div>
+
+          <% end %>
+        </fieldset>
+      
+
+        <% if @paid_plans.any? %> 
+          
+          <!-- payment information form -->
+          <fieldset data-uk-margin>
+            <legend id="account_payment_info_legend">payment info</legend>
+            <div class="uk-form-row uk-margin-small-top">
+              <%= f.text_field :first_name, :placeholder => params[:method] == 'pms' ? 'room number...' : 'first name...', :class => 'uk-width-1-1' %>
+            </div>
+            <div class="uk-form-row">
+              <%= f.text_field :last_name, :placeholder => 'last name...', :class => 'uk-width-1-1' %>
+            </div>
+
+            <% if @validation_plans.any? %>
+              <div id="validation_notice">
+                <div class="uk-form-row uk-margin-small-top">
+                  Note: No payments will be processed until your account has been activated.
+                </div>
+              </div>
+            <% end %>
+
+            <!-- ONLY credit-based coupons will work here -->
+            <% if Coupon.exists? %>
+              <div class="uk-form-row">
+                <%= text_field_tag 'coupon_code', params[:coupon_code], :placeholder => 'coupon...', :class => 'uk-width-1-1' %>
+              </div>
+              <div class="uk-form-row">
+              </div>
+            <% end %>
+
+            <% if @stripe_plans.any? %>
+              <%= render :partial => 'stripe_form_elements' %>
+            <% end %>
+
+            <% if @direct_plans.any? %>
+              <div id="payment_fields">
+                <div class="uk-form-row ">
+                  <%= f.text_field :cc_number, :placeholder => 'card number...', :disabled => params[:method].nil? ? false : params[:method] != 'direct', :class => 'uk-width-1-1' %>
+                </div>
+                <div class="uk-form-row uk-margin-small-top">
+                  <%= f.select :cc_expiration_month, %w( 01 02 03 04 05 06 07 08 09 10 11 12), { }, { :disabled => params[:method].nil? ? false : params[:method] != 'direct', :class => 'uk-width-1-4' } %>
+                  <!-- explicitly setting selected to f.object.cc_expiration_year.to_i is
+                  necessary because the expiration year is stored as an encrypted string
+                  and must be converted to an integer to be recognized as a valid value by
+                  the form helper -->
+                  <%= f.select :cc_expiration_year, Time.now.year .. Time.now.year + 20,
+                    { :selected => f.object.nil? ? Time.now.year : f.object.cc_expiration_year.to_i },
+                    { :disabled => params[:method].nil? ? false : params[:method] != 'direct', :class => 'uk-width-1-4' } %>
+                  <%= f.text_field :cc_cvv2, :size => 4, :placeholder => 'cvv2...', :disabled => params[:method].nil? ? false : params[:method] != 'direct', :class => 'uk-width-1-4' %>
+                  <span class="uk-float-right">
+                    <a href="#securityCodeModal" style="text-decoration:underline;" data-uk-modal>What is this?</a>
+                    <%= render :partial => 'security_code_modal' %>
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </fieldset>
+
+        
+        <% end %>
+
+        <!-- address info -->
+        <% if @simple_form %>
+          <!-- fields that rXg requires but we don't want to require from customer -->
+          <%= f.hidden_field :address1, :value => "Quick Purchase" %>
+          <%= f.hidden_field :city,     :value => "Quick Purchase" %>
+          <%= f.hidden_field :state,    :value => "Quick Purchase" %>
+          <%= f.hidden_field :zip,      :value => 00000            %>
+        <% else %>
+          <fieldset data-uk-margin>
+            <legend>address</legend>
+            <div class="uk-form-row">
+              <%= f.text_field :address1, :placeholder => 'street...', :class => 'uk-width-1-1' %>
+            </div>
+            <div class="uk-form-row">
+              <%= f.text_field :city, :placeholder => 'city...', :class => 'uk-width-1-3' 
+              %><%= f.text_field :state, :placeholder => 'state...', :class => 'uk-width-1-3'
+              %><%= f.text_field :zip, :placeholder => 'zip...', :class => 'uk-width-1-3' %>
+            </div>
+          </fieldset>
+        <% end %>      
+
+        <fieldset data-uk-margin>
+          <div class="uk-form-row">
+            <br/>
+            <%= render :partial => 'terms_checkbox' %>
+          </div>
+          <div class="uk-form-row">
+            <%= button_tag('Purchase', :id => 'submit_button', :class => 'uk-button uk-width-1-1 rg-button' ) %>
+            <br/>
+          </div>
+        </fieldset>
+
+      </div><!-- end quick_purchase_fields -->
+
+    <% end %> <!-- end form -->
+    
+    <% if @validation_plans.any? %>
+      <div id="validation_required">
+        <%= form_for(@account, :as => :validation_account, :url => { :action => :validation_account_create }, :html => { :class => 'uk-form rg-form' }) do |f| %>
+          <center>This Usage Plan is only available after validating an account.</center>
+
+          <%= f.hidden_field :usage_plan_id %>
+          <%= render :partial => 'validated_account_form', locals: { f: f } %>
+          
+          <%= button_tag('Create Account', :id => 'validated_account_submit_button', :class => 'uk-button uk-width-1-1 rg-button' ) %>
+        
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% unless @payment_method.errors.empty? && @account.errors.empty? %>
+    <div class="uk-width-small-1-1 uk-width-medium-1-1 uk-width-large-1-4 rg-transparent-bg">
+      <%= error_messages_for :account %>
+      <%= error_messages_for :payment_method %>
+    </div>
+  <% end %>
+  
+</div>
+
+
+<script type="text/javascript">
+
+function scrollToElement(theElement){
+
+  var selectedPosX = 0;
+  var selectedPosY = 0;
+
+  while(theElement != null){
+    selectedPosX += theElement.offsetLeft;
+    selectedPosY += theElement.offsetTop;
+    theElement = theElement.offsetParent;
+  }
+
+ window.scrollTo(selectedPosX,selectedPosY);
+}
+
+function enableCreditCard() {
+  $('#payment_method_cc_number').prop('disabled', false);
+  $('#payment_method_cc_cvv2').prop('disabled', false);
+  $('#payment_method_cc_expiration_month').prop('disabled', false);
+  $('#payment_method_cc_expiration_year').prop('disabled', false);
+  $('#payment_method_cc_number').prop('disabled', false);
+}
+
+function disableCreditCard() {
+  $('#payment_method_cc_number').prop('disabled', true);
+  $('#payment_method_cc_cvv2').prop('disabled', true);
+  $('#payment_method_cc_expiration_month').prop('disabled', true);
+  $('#payment_method_cc_expiration_year').prop('disabled', true);
+  $('#payment_method_cc_number').prop('disabled', true);
+}
+
+function enablePmsMethod() {
+  $('#method_pms').prop('disabled', false);
+}
+
+function disablePmsMethod() {
+  $('#method_pms').prop('disabled', true);
+}
+
+function enableDirectMethod() {
+  $('#method_direct').prop('disabled', false);
+}
+
+function disableDirectMethod() {
+  $('#method_direct').prop('disabled', true);
+}
+
+function enableOffsiteMethod() {
+  $('#method_offsite').prop('disabled', false);
+}
+
+function disableOffsiteMethod() {
+  $('#method_offsite').prop('disabled', true);
+}
+
+function showToken() {
+  $('#token_fields').show();
+}
+function hideToken() {
+  $('#token_fields').hide();
+}
+function hideCreditCard() {
+  $('#payment_fields').hide(); 
+}
+function showCreditCard() {
+  $('#payment_fields').show(); 
+}
+function hideValidationNotice() {
+  $('#validation_notice').hide(); 
+}
+function showValidationNotice() {
+  $('#validation_notice').show(); 
+}
+function showValidationRequired() {
+  $('#validation_required').show();
+  $('#quick_purchase_fields').hide();
+}
+function hideValidationRequired() {
+  $('#validation_required').hide();
+  $('#quick_purchase_fields').show();
+}
+function showPhoneValidationNotice() {
+  $('#phone_verification_notice').show()
+}
+function hidePhoneValidationNotice() {
+  $('#phone_verification_notice').hide()
+}
+function showEmailValidationNotice() {
+  $('#email_verification_notice').show()
+}
+function hideEmailValidationNotice() {
+  $('#email_verification_notice').hide()
+}
+
+function enableSubmit() {
+  $('#submit_button').prop('disabled', false);
+}
+
+function usagePlanOnclick(input, direct, offsite, pms, free, token, email_validation_supported, phone_validation_supported) {
+  // Set the usage_plan_id value of the hidden field within the validated account form
+  $("#validation_account_usage_plan_id").val(input.value);
+
+  if (direct) {
+    enableDirectMethod();
+    if (free || token) {
+      hideCreditCard();
+      if (token) {
+        showToken();
+      } else {
+        hideToken();
+      }
+    } else {
+      hideToken();
+      showCreditCard();
+    }
+    if (!offsite && !pms) {
+     $('#method_direct').prop('checked', true);
+    }
+  } else {
+    if (free && !pms && !offsite) {
+      // A free plan with no merchants/pms servers
+      enableDirectMethod();
+    } else {
+      disableDirectMethod();
+    }
+  }
+
+  if (offsite) {
+    enableOffsiteMethod();
+    hideCreditCard();
+    hideToken();
+    if (!direct && !pms) {
+     $('#method_offsite').prop('checked', true);
+    }
+  } else {
+    if (free && !direct && !pms) {
+      // A free plan with no merchants/pms servers
+      enableOffsiteMethod();
+    } else {
+      disableOffsiteMethod();
+    }
+  }
+
+  if (pms) {
+    enablePmsMethod();
+    hideToken();
+    if (!direct) {
+      hideCreditCard();
+    }
+    if (!direct && !offsite) {
+      hideCreditCard();
+     $('#method_pms').prop('checked', true);
+     $('#payment_method_first_name').prop('placeholder', 'room number...');
+    }
+  } else {
+   $('#payment_method_first_name').prop('placeholder', 'first name...');
+    if (free && !direct && !offsite) {
+      // A free plan with no merchants/pms servers
+      enableDirectMethod();
+     $('#method_direct').prop('checked', true);
+    } else {
+      disablePmsMethod();
+    }
+  }
+
+  if (free) {
+    hideCreditCard();
+    hideToken();
+    disablePmsMethod();
+    disableDirectMethod();
+    disableOffsiteMethod();
+  } else {
+    if (!token && !pms && !offsite) {
+      showCreditCard();
+      hideToken();
+    } else if (!token) {
+      hideToken();
+    }
+  }
+
+  if (email_validation_supported || phone_validation_supported) {
+    showValidationRequired();
+    if (email_validation_supported) {
+      showEmailValidationNotice();
+    } else {
+      hideEmailValidationNotice();
+    }
+    if (phone_validation_supported) {
+      showPhoneValidationNotice();
+    } else {
+      hidePhoneValidationNotice();
+    }
+  } else {
+    hideValidationRequired();
+  }
+  
+}
+
+
+
+function directOnclick () {
+  // switch first name field back to "First Name"
+ $('#payment_method_first_name').prop('placeholder', 'first name...');
+  enableCreditCard();
+  // scroll to input form, make CC number field active
+  // scrollToElement(document.getElementById('payment_method_cc_number'));
+  $('#payment_method_cc_number').focus();
+}
+
+function offsiteOnclick() {
+  // switch first name field back to "First Name"
+ $('#payment_method_first_name').prop('placeholder', 'first name...');
+  disableCreditCard();
+  // scroll to input form, make first name field active
+  // scrollToElement(document.getElementById('payment_method_first_name'));
+  $('#payment_method_first_name').focus();
+}
+
+function pmsOnclick() {
+  // change first name field to "Room Number"
+ $('#payment_method_first_name').prop('placeholder', 'room number...');
+  disableCreditCard();
+  // scroll to input form, make first name field active
+  // scrollToElement(document.getElementById('payment_method_first_name'));
+  $('#payment_method_first_name').focus();
+}
+
+
+function paymentFormOnSubmit() {
+
+  var selected_plan = $("input[name='usage_plan[id]']:checked");
+  if (selected_plan.data('token') == true) {
+    stripeFormOnSubmit();
+    // stripe handler will take care of submitting form if validation passes.
+    return false;
+  }
+
+  var password = document.getElementById('password_static');
+  var password_confirmation = document.getElementById('password_confirmation_static');
+
+  var str=document.getElementById('email');
+  var filter=/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+
+  var do_submit = true;
+
+  if (password.value != password_confirmation.value) {
+    alert("Password does not match confirmation.");
+    password.style.border = "1px solid red";
+    password_confirmation.style.border = "1px solid red";
+    do_submit = false;
+  } else {
+    password.style.border = "1px solid #ddd";
+    password_confirmation.style.border = "1px solid #ddd";
+  }
+
+  if (!filter.test(str.value)) {
+    alert("Please input a valid email address.");
+    str.style.border = "1px solid red";
+    do_submit = false;
+  } else {
+    str.style.border = "1px solid #ddd";
+  }
+
+  var tos_checkbox = document.getElementById('tos');
+  if (tos_checkbox && tos_checkbox.checked != true) {
+    alert("You must accept the Terms of Service to continue.");
+    do_submit = false;
+  }
+
+  if (do_submit == true) {
+    $('#submit_button').prop('disabled', do_submit);
+  }
+
+  return do_submit;
+}
+
+$(function () {
+  // trigger the onclick function when the page is loaded
+  $('input[name="usage_plan[id]"]:checked').trigger('click');
+
+});
+
+</script>
+

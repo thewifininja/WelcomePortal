@@ -1,0 +1,66 @@
+<div class="rg-heading">
+  <h2 class='uk-visible-small'>SMS Login</h2>
+  <h1 class='uk-hidden-small'>SMS Login</h1>
+</div>
+
+<div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-1-1">
+
+    <% unless @sms_account_group && @sms_custom_email %>
+
+      <p>
+        Login via SMS has not been configured by the operator of this network.
+      </p>
+  
+    <% else %>
+
+      <% unless @account && @account.valid? %>
+
+        <%= render :partial => 'sms_simple_signup_form' %>
+
+      <% else %>
+
+        <%= form_tag({ :action => :account_login }, { :id => 'login_form_account', :class => 'uk-form rg-form' } ) do %>
+        
+          <p>
+            Once you have received your numeric access token via SMS, enter the token in the
+            field below to access the Internet.  It may take your carrier a few minutes to deliver the code to your phone.
+          </p>
+
+          <%= hidden_field_tag :login, @account.login %>
+          
+          <fieldset data-uk-margin>
+            <legend>enter token</legend>
+            <div class="uk-form-row">
+              <%= password_field_tag 'password', '', :placeholder => 'token...', :class => 'uk-width-1-1' %>
+            </div>
+            <div class="uk-form-row">
+              <%= button_tag('Sign On', :class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' }) %>
+            </div>
+          </fieldset>
+      
+        <% end %>
+
+      <% end %>
+
+    <% end %>
+
+  </div>
+
+</div>
+
+<script type="text/javascript">
+
+function smsAccountCreateOnclick() {
+  document.getElementById('sms_account_create_submit').disabled = true;
+  document.getElementById('sms_account_create_form').submit();
+  return true;
+}
+
+function accountLoginOnclick() {
+  document.getElementById('account_login_submit').disabled = true;
+  document.getElementById('login_form_account').submit();
+  return true;
+}
+
+</script>

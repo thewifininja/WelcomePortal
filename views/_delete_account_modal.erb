@@ -1,0 +1,26 @@
+<div id="deleteAccountModal" class="uk-modal">
+  <div class="uk-modal-dialog">
+    <div class="uk-modal-header">
+      <h2>Delete Account<a class="uk-modal-close uk-close"></a></h2>
+      
+    </div>
+    
+    <%= form_tag( {:action => :delete_account}, {:class => 'uk-form rg-form'} ) do %>
+      <p>
+        <b>WARNING:</b> Clicking the button below will cause your account to be 
+        permanently erased, including any remaining usage or account credit.  
+        This action is unrecoverable.
+      </p>
+      <p>
+        Do you wish to proceed?
+      </p>
+      <p>
+        <%= button_tag('Delete my account', :class => 'uk-button uk-width-1-1 rg-button', data: { confirm: 'Are you really sure?', :disable_with => 'Please wait...'  }) %>
+      </p>
+    <% end %>
+    
+    <div class="uk-modal-footer">
+      <button class="uk-modal-close rg-button">Cancel</button>
+    </div>
+  </div>
+</div>

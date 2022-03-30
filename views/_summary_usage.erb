@@ -1,0 +1,22 @@
+<div class="uk-grid rg-transparent-bg rg-margin-left rg-payment-form uk-padding-remove uk-margin-remove">
+  <div class="uk-width-1-1">
+    <%= link_to( {:action => :usage} ) do %>
+      <%= portal_inline_svg 'usage.svg', {:class => 'tile-icon'} %>
+    <% end %>
+    <h3 class="uk-margin-top-remove uk-padding-top-remove">Usage</h3>
+    <% graph = NetworkGraph.new(
+      name: "Daily Traffic",
+      # Display a plot for each Device's MAC address if the Account has more
+      # than one.
+      graphables: [ @current_account_or_token ],
+      graph_time: @graph_time || GraphTime.new(past_time: 1, past_time_unit: 'days'),
+      grouped_by: 'second',
+      unit: 'bits'
+    ) %>
+    <%= render :partial => 'shared/graph', :object => graph.set_tunables(
+        { :height => 250, range_selector: false, background: '#ffffff', border: false, inline: true }
+      ) %>
+    <br>
+    <%= link_to 'View Usage', {:action => :usage}, {:class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' } } %>
+  </div>
+</div>

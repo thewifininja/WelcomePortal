@@ -1,0 +1,15 @@
+<div class='rg-heading'>
+  <h2 class='uk-visible-small'>Redeem Coupon</h2>
+  <h1 class='uk-hidden-small'>Redeem Coupon</h1>
+</div>
+
+<% if @current_account %>
+  <%= render :partial => 'redeem_coupon_form' %>
+<% else %>
+  <div class="rg-transparent-bg">
+    <p>&nbsp;&nbsp;
+      Please <%= link_to 'sign up', :action => :quick_purchase %> or 
+      login before redeeming a coupon.
+    <p>
+  </div>
+<% end %>

@@ -1,0 +1,643 @@
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  -webkit-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+a:hover {
+  text-decoration: none;
+}
+
+label {
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+table, td {
+  border: 1px solid #666;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 1px;
+  margin: 0px;
+}
+
+h3, h4 {
+  border-bottom: 1px solid #666;
+}
+
+legend {
+  display: block;
+  width: 100%;
+  padding: 0;
+  font-size: 21px;
+  line-height: inherit;
+  margin-bottom: 0px;
+  border: none;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.thead {
+  font-weight: 900;
+}
+
+.inline-block {
+  display: inline-block;
+}
+/* Style for missing localization translations */
+.translation_missing {
+  /*  color: blue;*/
+}
+
+.error-messages {
+  padding: 15px;
+}
+
+.tile-icon {
+  width: 128px;
+  height: 128px;
+  margin-right: 10px;
+  /* border: 8px solid #555; */
+  box-shadow: 0 0 15px 10px black inset, 0 0 12px 1px #020202;
+  border-radius: 50%;
+  margin: auto;
+  display: block;
+  transition: 0.25s;
+}
+.grid-item:hover .tile-icon {
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  filter: FlipH;
+  -ms-filter: "FlipH";
+  transition: 0.5s;
+}
+.focus, .tile-bg {
+  transition: 0.25s
+}
+.grid-item:hover .focus {
+  transition: 0.5s;
+  fill: red !important;
+}
+.grid-item:hover .tile-bg {
+  fill: #c75c5c !important;
+}
+
+.manage_devices_section {
+  margin-bottom: 15px;
+}
+.device_summary_row {
+  cursor: pointer;
+  padding: 5px;
+  padding-right: 30px;
+  box-sizing: content-box;
+  border: 1px solid;
+  position: relative;
+  background: rgba(255, 255, 255, 0.5);
+}
+.detail_row {
+  display: none;
+  cursor: default;
+  margin-right: -25px;
+}
+.device_summary_row::after {
+  content: '+';
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  right: 12px;
+  top: 5;
+  font-size: 20px;
+  line-height: 30px;
+  font-weight: 500;
+}
+.device_summary_row::after, .device_header {
+  font-size: 20px;
+  line-height: 30px;
+}
+.device_summary_row span.device_header_badge {
+  border: 1px solid #555;
+  padding: 3px;
+  white-space: nowrap;
+  vertical-align: text-bottom;
+  background: white;
+  background: -moz-linear-gradient(top, white 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%);
+  background: -webkit-linear-gradient(top, white 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%);
+  background: linear-gradient(to bottom, white 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 );
+}
+
+.device_summary_row.open::after {
+  content: '-';
+}
+.open .device_header {
+  font-weight: 500;
+}
+
+.expand_all, .collapse_all {
+  font-size: smaller;
+}
+
+.manage-devices-box {
+  display: inline-block;
+  padding: 5px 10px;
+}
+
+.manage-devices-box>table th {
+  background-color: rgba(255,255,255,0.25);
+}
+
+.manage-devices-box>table td {
+  background-color: rgba(255,255,255,0.15);
+}
+
+.action-cell {
+  text-align: center;
+  padding-top: 8px;
+  background-color: transparent !important;
+}
+
+.rg-padding-large {
+  padding: 10px;
+}
+
+.rg-no-border {
+  border: 0;
+}
+
+.rg-tiny {
+  font-size: 0.85em;
+}
+
+.rg-session-info {
+  padding-top: 0px;
+}
+
+.rg-transparent-bg {
+  background: rgba(245,245,245,0.9);
+  border: 1px solid #4d4d4d;
+  font-size: small;
+  text-shadow: none;
+}
+
+.rg-margin-left {
+  margin-left: 1px;
+  padding: 0;
+}
+
+.rg-margin-bottom {
+  margin-bottom: 15px;
+}
+
+.rg-padded {
+  padding: 8px;
+}
+
+.rg-heading {
+  color: #ddd;
+  text-shadow: 0 0 3px #000, 0 0 6px #333, 0 0 9px #fff;
+}
+
+.rg-heading h1, .rg-heading h2, .rg-heading h3, .rg-heading h4 {
+  color: #ddd;
+  /*text-shadow: 0 0 3px #333, 0 0 7px #fff;*/
+}
+
+.rg-yield h3, .rg-yield h4 {
+  border-bottom: 1px solid #ddd;
+}
+
+.rg-shadow {
+  text-shadow: 0 0 3px #333, 0 0 7px #fff;
+}
+
+.rg-purchase {
+}
+
+.rg-purchase-button {
+  text-shadow: none;
+}
+
+.rg-form {
+  width: 100%;
+  padding: 4%;
+  /*padding: 10px;
+  /*margin: 10px;*/
+  margin-bottom: 10px !important;
+  /*margin-top: 10px;*/
+  background: rgba(245,245,245,0.9);
+  border: 1px solid #4d4d4d;
+  /* border-radius: 5px; */
+}
+
+.rg-form legend {
+  padding-bottom: 5px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.rg-form legend:after {
+  border-bottom: 1px solid #666;
+}
+
+.rg-underline {
+  border-bottom: 1px solid #666;
+  padding-bottom: 1px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.rg-button {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f1f1f1+50,e1e1e1+51,f6f6f6+100;White+Gloss+%231 */
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(241,241,241,1) 50%, rgba(225,225,225,1) 51%, rgba(246,246,246,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(241,241,241,1) 50%,rgba(225,225,225,1) 51%,rgba(246,246,246,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-9 */
+  border: 1px solid #444;
+  padding: 0px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  max-width: 300px;
+  min-width: 200px;
+  margin: auto;
+}
+.uk-form input.rg-button {
+  font-size: 16px;
+  line-height: 30px;
+}
+
+.rg-button-inline {
+  display: inline-block;
+}
+
+.rg-button:hover {
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.24), 0 3px 4px 0 rgba(0, 0, 0, 0.19);
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,dce8fa+50,ccdef6+51,e4edfa+100 */
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(220,232,250,1) 50%, rgba(204,222,246,1) 51%, rgba(228,237,250,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(220,232,250,1) 50%,rgba(204,222,246,1) 51%,rgba(228,237,250,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(220,232,250,1) 50%,rgba(204,222,246,1) 51%,rgba(228,237,250,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e4edfa',GradientType=0 ); /* IE6-9 */
+}
+.rg-button-red, .rg-button-red-hover:hover {
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.24), 0 3px 4px 0 rgba(0, 0, 0, 0.19);
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fff1ef+0,ffdad5+50,ffbeb5+51,ffe3df+100 */
+  background: rgb(255,241,239); /* Old browsers */
+  background: -moz-linear-gradient(top,  rgba(255,241,239,1) 0%, rgba(255,218,213,1) 50%, rgba(255,190,181,1) 51%, rgba(255,227,223,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  rgba(255,241,239,1) 0%,rgba(255,218,213,1) 50%,rgba(255,190,181,1) 51%,rgba(255,227,223,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  rgba(255,241,239,1) 0%,rgba(255,218,213,1) 50%,rgba(255,190,181,1) 51%,rgba(255,227,223,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fff1ef', endColorstr='#ffe3df',GradientType=0 ); /* IE6-9 */
+}
+
+.no-min-width {
+  min-width: 0;
+}
+.small-min-width {
+  min-width: 65px;
+  padding: 0 5px;
+}
+
+.activated {
+  background: linear-gradient(to bottom, #d6f3d2 0%, #ecf9eb 50%, #b0efac 51%, #d6f3d2 100%);
+}
+
+.validated_icon:after {
+  position: absolute;
+  /* top: 6px; */
+  padding: 6px;
+  right: 0;
+  content: "\f14a";
+  content: "\f05d";
+  font-family: FontAwesome;
+  text-align: right;
+  vertical-align: middle;
+  height: 17px;
+  width: 15px;
+  z-index: 10000;
+  font-size: 18px;
+  color: #02a100;
+}
+
+.relative {
+  position: relative
+}
+
+.validated_contact_info_field {
+  box-shadow: 0px 0px 5px inset #00a100;
+  padding-right: 26px !important;
+}
+
+.rg-navbar {
+  padding-top: 5px;
+  padding-right: 0px;
+  padding-bottom: 12px;
+  padding-left: 0px;
+  border-top-width: medium;
+  border-right-width: medium;
+  border-bottom-width: medium;
+  border-left-width: medium;
+  border-top-style: none;
+  border-right-style: none;
+  /* border-bottom-style: none; */
+  border-bottom: 1px solid #333333;
+  border-left-style: none;
+  border-image-source: none;
+  border-image-slice: 100% 100% 100% 100%;
+  border-image-width: 1 1 1 1;
+  border-image-outset: 0 0 0 0;
+  border-image-repeat: stretch stretch;
+  background-color: #ffffff;
+  background-image: none;
+  background-repeat: repeat;
+  background-attachment: scroll;
+  background-position: 0% 0%;
+  background-clip: border-box;
+  background-origin: padding-box;
+  background-size: auto auto;
+  position: fixed;
+  z-index: 10;
+  width: 100%;
+  top: 0;
+}
+
+.rg-center-content {
+  margin-top: 66px
+}
+
+.rg-footer {
+  border-top: 1px solid #aaa;
+  padding-bottom: 5px;
+  position: fixed;
+  bottom: 0;
+  z-index: 1000;
+  width: 100%;
+  top: inherit;
+}
+
+.rg-development-bar {
+  z-index: 500;
+  position: fixed;
+  background-color: yellow;
+  bottom: 0px;
+  width: 100%;
+}
+
+.rg-yield {
+}
+
+.rg-payment-form > * {
+  padding: 15px;
+}
+
+.uk-slideshow, .uk-slideshow>li {
+  height: 100% !important;
+}
+
+.rg-cover {
+  position: fixed !important;
+  top: 66px;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+}
+
+/* This element defines the screen door effect in front of the
+image.  Simply make background-image: none to remove it.  Or
+use any semi-transparent image as the background and it will
+be overlayed on top of the slideshow images. */
+.rg-cover-object {
+  padding: 5px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAASUlEQVQoU2N0d3N/tnPXTikGKADxQUx0MUaQIEwxsiZ0MbBCZMUwProYiokwSWSrYSYzYrMO3TSQGuIVYtON1WqyPIM3eIgNcADkp3bz9i5yegAAAABJRU5ErkJggg==) repeat;
+  background-size: 8px 8px;
+}
+
+/* affects graphs that result in the "no data to display" 
+message when a graph has no available data */
+.portal-graphs-container > div > h2 {
+  font-size: 16px;
+  margin: 8px;
+}
+
+@media (max-width: 767px) {
+  .rg-yield {
+    /*max-height: 400px;*/
+    overflow: auto;
+  }
+
+  .rg-cover {
+    min-height: 590px;
+    top: 58px;
+  }
+
+  .rg-overflow {
+    overflow: auto;
+    height: 470px;
+  }
+
+}
+
+@media (min-width: 768px) {
+  .rg-cover {
+    min-height: 490px;
+  }
+
+  .rg-overflow {
+    overflow: auto;
+    height: 470px;
+  }
+
+}
+
+@media (min-width: 960px) {
+  .rg-overflow {
+    overflow: auto;
+    height: 600px;
+  }
+
+}
+
+@media (min-width: 1220px) {
+  .rg-overflow {
+    overflow: hidden;
+    height: 740px;
+  }
+
+}
+
+.rg-navbar-nav {
+  padding-top: 8px;
+  padding-right: 17px;
+  float: right;
+}
+
+ul.rg-navbar-nav li.rg-first {
+  border-left: none;
+}
+
+ul.rg-navbar-nav li > a {
+  font-weight: bold;
+  font-size: 1.0em;
+  color: #383A3B;
+  background: none !important;
+}
+
+ul.rg-navbar-nav li {
+  /* border-left: 2px solid #888; */
+}
+
+.rg-navbar-nav>li.uk-active>a:hover, 
+.uk-navbar-toggle:focus, 
+.uk-navbar-toggle:hover, 
+ul.rg-navbar-nav li > a:hover {
+  color: #ED1F24;
+  font-weight: bold;
+}
+
+.rg-navbar-nav > li.uk-active > a {
+  color: #ED1F24 !important;
+}
+
+#rg-offcanvas ul>li {
+  float: none;
+}
+
+#rg-offcanvas ul > li > a {
+  color: #FFF;
+}
+#rg-offcanvas ul > li > a:hover {
+  color: #ED1F24;
+}
+
+#offsite_purchase_button {
+  text-align: center;
+}
+
+.rg-pricing table {
+  margin-bottom: 10px;
+}
+
+.rg-transaction-failed {
+  background-color: rgba(210, 0, 0, 0.36);
+}
+
+.flash-message-container {
+  max-width: 500px;
+  margin: auto;
+  text-align: center;
+}
+
+.uk-close {
+  float: right;
+}
+
+.accessible_text {
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  overflow: hidden;
+  top: -10px;
+}
+
+.center-align {
+  text-align: center;
+}
+
+
+
+
+/*  SOCIAL LOGIN BUTTONS */
+
+.social-login-btn {
+  padding-right: 45px;
+  height: 35px;
+  background: none;
+  border: none;
+  display: block;
+  background-size: 35px 35px;
+  background-position: right center;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  margin: 0px auto 15px;
+  width: 205px;
+  border-bottom: 2px solid transparent;
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+  box-shadow: 0 4px 2px -2px gray;
+  text-shadow: rgba(0, 0, 0, 0.5) -1px -1px 0;
+  cursor: pointer;
+}
+
+/* inlude -custom in the class names to prevent AdBlockPlus from blocking 
+   the social media login buttons */
+.btn-facebook, .btn-facebook-custom {
+  border-color: #2d5073;
+  background-color: #3b5998;
+  background-image: url(<%= portal_asset_data_uri 'facebook-icon.png' %>);
+}
+
+.btn-twitter, .btn-twitter-custom {
+  border-color: #007aa6;
+  background-color: #008cbf;
+  background-image: url(<%= portal_asset_data_uri 'twitter-icon.png' %>);
+  background-size: 40px;
+}
+
+.btn-googleplus, .btn-googleplus-custom {
+  border-color: #111;
+  background-color: #222;
+  text-shadow: #333 -1px -1px 0;
+  background-image: url(http://www.iconsdb.com/icons/preview/white/google-plus-xxl.png);
+}
+
+.btn-google_oauth2, .btn-google_oauth2-custom, .btn-google, .btn-google-custom {
+  border: none;
+  background-color: #FFF;
+  color: #515151;
+  text-shadow: inherit;
+  background-image: url(<%= portal_asset_data_uri 'google-icon.svg' %>);
+}
+
+.btn-instagram, .btn-instagram-custom {
+  background-image: url(<%= portal_asset_data_uri 'instagram-icon.png' %>);
+  border: none;
+  background-color: #db3075;
+  color: #FFF;
+  text-shadow: inherit;
+  background-size: 17px;
+  background-position: right 8px center;
+}
+
+.btn-linked_in, .btn-linked_in-custom {
+  border: none;
+  background-color: #0377b5;
+  color: #FFF;
+  text-shadow: inherit;
+  background-image: url(<%= portal_asset_data_uri 'linked_in-icon.svg' %>);
+}
+
+.btn-saml-custom {
+  background-color: #428bca;
+  border-color: #357ebd;
+  /* Remove padding-right: 0px; and add a background-image to add a logo to button */
+  padding-right: 0px;
+}
+
+/* END SOCIAL LOGIN BUTTONS */

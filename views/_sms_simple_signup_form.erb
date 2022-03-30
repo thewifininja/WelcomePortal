@@ -1,0 +1,42 @@
+<%= form_for @account, :url => { :action => :sms_account_create },
+  :html => { :id => 'sms_account_create_form', :class => 'uk-form rg-form' } do |f| %>
+
+  <fieldset data-uk-margin>
+    <legend>SMS Signup</legend>
+    <p>
+      Supply a valid mobile phone number below to receive your Internet access
+      token via SMS.
+    </p>
+    <div class="uk-form-row">
+      <!-- Uncomment and remove the form field below to obviate the need for the
+      end-user to supply a first name -->
+      <%# f.hidden_field :first_name, :value => "SMS Auth" %>
+      <%= f.text_field :first_name, :placeholder => 'first name...', :class => 'uk-width-1-1', :required => true %>
+    </div>
+    <div class="uk-form-row">
+      <!-- Uncomment and remove the form field below to obviate the need for the
+      end-user to supply a last name -->
+      <%# f.hidden_field :last_name, :value => "SMS Auth" %>
+      <%= f.text_field :last_name, :placeholder => 'last name...', :class => 'uk-width-1-1', :required => true %>
+    </div>
+    <div class="uk-form-row">
+    </div>
+    <div class="uk-form-row">
+      <!-- Uncomment and remove the form field below to obviate the need for the
+      end-user to supply a last name -->
+      <%# f.hidden_field :email, :value => "SMS Auth" %>
+      <%= f.text_field :email, :placeholder => 'email...', :class => 'uk-width-1-1', :required => true %>
+    </div>
+    <div class="uk-form-row">
+      <%= f.text_field :phone, :placeholder => 'mobile phone...', :class => 'uk-width-1-1', :required => true %>
+    </div>
+    <div class="uk-form-row">
+      <%= f.select :address2, options_for_select(@sms_email_suffix_by_carrier.to_a, :disabled => [nil] ), { :prompt => '-- Choose Mobile Carrier --' }, { :class => 'uk-width-1-1', :required => true } %>
+    </div>
+    <div class="uk-form-row">
+      <%= render :partial => 'terms_checkbox' %>
+      <%= button_tag('Continue', :class => 'uk-button uk-width-1-1 rg-button', :data => { :disable_with => 'Please wait...' }) %>
+    </div>
+  </fieldset>
+
+<% end %> <!-- end form_for @account -->
